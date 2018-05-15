@@ -13,6 +13,20 @@
                 <input value="完成并创建" type="button" class="sub">
             </div>
         </div>
+        <div class= "shade" style="display: block;">
+            <div class="shade_box">
+                <header class="new_head" style="margin-bottom: 10px;">
+                    <div class="title">项目设置</div> 
+                </header>
+                <div style="font-size:16px;line-height:24px;margin-bottom: 10px;">项目名称</div>
+                <input type="text" class="text" style="margin-bottom: 25px;">
+                <div style="font-size:16px;line-height:24px;margin-bottom: 10px;">项目简介</div>
+                <textarea class="area" style="margin-bottom: 25px;"></textarea>
+                <input value="确认修改" type="button" class="sub" style="margin-bottom: 25px;">
+                <input value="取消修改" type="button" class="sub" style="margin-bottom: 25px;">
+                <input value="删除项目" type="button" class="sub" style="margin-bottom: 25px;">
+            </div>
+        </div>
         <header class="head">
             <div class="search_new">
                 <input type="text" placeholder="输入搜索内容">
@@ -47,6 +61,14 @@
                             <div class="project-grid-group__card">
                                 <div class="project-name">项目名称</div>
                                 <div class="project-desc">项目描述</div>
+                            </div>
+                            <div class="icon">
+                                <span>
+                                    <Icon type="edit" size="20"></Icon>
+                                </span>
+                                <span>
+                                    <Icon type="ios-star" size="22"></Icon>
+                                </span>
                             </div>
                         </li>
                         <li class="project-grid-group__item addfile">
@@ -269,8 +291,23 @@
         width: 254px;
         height: 128px;
     }
+    .project-grid-group__item .icon{
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        
+    }
+    .project-grid-group__item .icon span{
+        float:left;
+        color:rgba(255,255,255,.8);
+        margin-left:5px; 
+        display: none;
+    }
     .project-grid-group__item:hover{
         transform: translateY(-5px);
+    }
+    .project-grid-group__item:hover .icon span{
+        display: block;
     }
     .project-grid-group__card{
         width: 254px;
