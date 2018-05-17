@@ -1,13 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {getShopList, getRecommend} from '@/server/'
+import cookies from "js-cookie"
 Vue.use(Vuex)
 let store = new Vuex.Store({
     state:{
-        
+        // loginState:cookies('loginState')||false
     },
     mutations:{
-       
+        // changeLoginState(state,payload){
+        //     state.loginState = payload
+        // }
     },
     actions:{
         

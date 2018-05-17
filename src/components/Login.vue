@@ -1,12 +1,69 @@
 <template>
     <div>
         <h1>Teambition</h1>
-        <input type="text" placeholder="请输入账号" class="text">
-        <input type="password" placeholder="请输入密码" class="text">
-        <input type="button" value="登录" class="btn_sub">
-        <input type="submit" value="注册" class="btn_sub">
+        <input type="text" placeholder="请输入账号" class="text" v-model="username">
+        <input type="password" placeholder="请输入密码" class="text" v-model="password">
+        <input type="button" value="登录" class="btn_sub" @click="userLogin">
+        <input type="submit" value="注册" class="btn_sub" @click="userSignin">
     </div>
 </template>
+<script>
+    import cookies from "js-cookie"
+    export default{
+        data(){
+            return{
+                username:'',
+                password:''
+            }
+        },
+        methods:{
+            userLogin(){
+                if(this.username.trim() == ''){
+                    alert("请输入用户名")
+                    return
+                }else if(this.password.trim() == ''){
+                    alert("请输入密码")
+                    return
+                }else{
+                    this.http.postLogin({
+                        username: this.username.trim(),
+                        password: this.password.trim()
+                    }).then((data)=>{
+                        let loginData = data.data
+                        if(loginData.success){
+                            this.username =''
+                            this.password =''
+                            this.$router.push({
+                                path:'/created'
+                            })
+                            cookies.set('loginState',loginData.success)
+                        }
+                    })
+                }
+            },
+            userSignin(){
+                if(this.username == ''){
+                    alert("请输入用户名")
+                    return
+                }else if(this.password == ''){
+                    alert("请输入密码")
+                    return
+                }else{
+                    this.http.postSignin({
+                        username: this.username,
+                        password: this.password
+                    }).then((data)=>{
+                        let signinData = data.data
+                        this.username =''
+                        this.password =''
+                        alert(signinData.code)
+                    })
+                }
+            }
+        }
+    }
+    
+</script>
 <style>
     h1{ 
         padding-top: 100px;
@@ -21,7 +78,7 @@
         outline: none;
     }
     .text{
-        width: 320px;
+        width: 346px;
         margin-bottom: 25px;
         padding: 12px;
         font-size: 16px;
@@ -40,5 +97,6 @@
         color: #fff;
         border: none;
         border-radius: 3px;
+        cursor: pointer;
     }
 </style>

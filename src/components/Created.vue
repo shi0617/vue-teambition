@@ -13,18 +13,18 @@
                 <input value="完成并创建" type="button" class="sub">
             </div>
         </div>
-        <div class= "shade" style="display: block;">
+        <div class= "shade" style="display: none;">
             <div class="shade_box">
                 <header class="new_head" style="margin-bottom: 10px;">
                     <div class="title">项目设置</div> 
                 </header>
                 <div style="font-size:16px;line-height:24px;margin-bottom: 10px;">项目名称</div>
-                <input type="text" class="text" style="margin-bottom: 25px;">
+                <input type="text" class="text mb25">
                 <div style="font-size:16px;line-height:24px;margin-bottom: 10px;">项目简介</div>
-                <textarea class="area" style="margin-bottom: 25px;"></textarea>
-                <input value="确认修改" type="button" class="sub" style="margin-bottom: 25px;">
-                <input value="取消修改" type="button" class="sub" style="margin-bottom: 25px;">
-                <input value="删除项目" type="button" class="sub" style="margin-bottom: 25px;">
+                <textarea class="area mb25"></textarea>
+                <input value="确认修改" type="button" class="sub mb25">
+                <input value="取消修改" type="button" class="sub mb25">
+                <input value="删除项目" type="button" class="sub mb25">
             </div>
         </div>
         <header class="head">
@@ -41,15 +41,19 @@
                     </ul>
                 </span>
             </div>
-            <h3 class="title">
+            <router-link 
+                :to="{name:'Created'}" 
+                class="title"
+                tag="h3"
+            >
                 Teambition
-            </h3>
+            </router-link>
             <div class="tag">
                 <span>我的</span>
                 <span>帮助</span>
                 <span>通知</span>
                 <span>私信</span>
-                <span>设置</span>
+                <span @click="quit">退出</span>
             </div>
         </header>
         <div id="content">
@@ -89,8 +93,23 @@
     </div>
 </template>
 <script>
+    import cookies from "js-cookie"
     export default {
-        
+        methods:{
+            quit(){
+                this.$router.push({
+                    path:"/login"
+                })
+                cookies.remove("loginState")
+            }
+        },
+        created(){
+            if(!cookies.get("loginState")){
+                this.$router.push({
+                    path:"/login"
+                })
+            }
+        }
     }
 </script>
 <style scoped>
@@ -174,6 +193,9 @@
         color: #fff;
         background-color: rgba(12,119,226,.7)
     }
+    .shade .shade_box .mb25{
+        margin-bottom: 25px;
+    }
     .head{
         padding: 0 16px;
         height: 48px;
@@ -193,6 +215,7 @@
     .head .title{
         text-align: center;
         font: 32px/48px arial,'微软雅黑';
+        cursor: pointer;
     }
     .head .search_new{
         display: flex;

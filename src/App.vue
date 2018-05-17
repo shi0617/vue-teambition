@@ -1,19 +1,12 @@
 <template>
   <div id="app">
-      <Login v-if="false"></Login>
-      <Created></Created>
+      <router-view/>
   </div>
 </template>
-
 <script>
-    import Login from '@/components/Login'
-    import Created from '@/components/Created'
+    import cookies from "js-cookie"
     export default {
-        name: 'App',
-        components:{
-            Login,
-            Created
-        }
+        name: 'App'
     }
 </script>
     
