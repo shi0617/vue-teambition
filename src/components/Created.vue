@@ -1,39 +1,50 @@
 <template>
     <div class="box">
-        <div class= "shade" style="display: none;">
+        <div class= "shade" v-if="addProjectState">
             <div class="shade_box">
                 <header class="new_head">
                     <div class="title">创建项目</div> 
-                    <div class="close">X</div>
+                    <div class="close" @click="closeShade">X</div>
                 </header>
                 <div class="pic"></div>
                 <div class="tag">为不同的事物建立不同的项目</div>
-                <input type="text" class="text" placeholder="项目名称（必填）">
-                <textarea placeholder="项目简介（选填）" class="area"></textarea>
-                <input value="完成并创建" type="button" class="sub">
+                <input type="text" class="text" placeholder="项目名称（必填）" v-model="createProjectName">
+                <textarea placeholder="项目简介（选填）" class="area" v-model="createProjectDesc"></textarea>
+                <input value="完成并创建" type="button" class="sub" @click="finishCreateProject">
             </div>
         </div>
-        <div class= "shade" style="display: none;">
+        <div class= "shade" v-if="setState">
             <div class="shade_box">
                 <header class="new_head" style="margin-bottom: 10px;">
                     <div class="title">项目设置</div> 
                 </header>
                 <div style="font-size:16px;line-height:24px;margin-bottom: 10px;">项目名称</div>
-                <input type="text" class="text mb25">
+                <input type="text" class="text mb25" v-model="changeFileName">
                 <div style="font-size:16px;line-height:24px;margin-bottom: 10px;">项目简介</div>
-                <textarea class="area mb25"></textarea>
-                <input value="确认修改" type="button" class="sub mb25">
-                <input value="取消修改" type="button" class="sub mb25">
-                <input value="删除项目" type="button" class="sub mb25">
+                <textarea class="area mb25" v-model="changeFileDesc"></textarea>
+                <input 
+                    value="确认修改" 
+                    type="button" 
+                    class="sub mb25" 
+                    @click="conformChange"
+                >
+                <input 
+                    value="取消修改" 
+                    type="button" class="sub mb25" 
+                    @click="cancelChange">
+                <input 
+                    value="移动到回收站" 
+                    type="button" class="sub mb25" 
+                    @click="changeRecycle">
             </div>
         </div>
         <header class="head">
             <div class="search_new">
                 <input type="text" placeholder="输入搜索内容">
                 <span>
-                    <i>+</i>
-                    <ul class="menu" style="display: none;">
-                        <li>项目</li>
+                    <i @click="addFile">+</i>
+                    <ul class="menu" v-if="addState">
+                        <li @click="newProject">项目</li>
                         <li>任务</li>
                         <li>文件</li>
                         <li>日程</li>
@@ -61,54 +72,239 @@
                 <div class="project">
                     <h3>我的项目</h3>
                     <ul class="project-grid-group__component">
-                        <li class="project-grid-group__item">
+                        <li class="project-grid-group__item" v-for="item in userData">
                             <div class="project-grid-group__card">
-                                <div class="project-name">项目名称</div>
-                                <div class="project-desc">项目描述</div>
+                                <div class="project-name">{{item.filename}}</div>
+                                <div class="project-desc">{{item.filedesc}}</div>
                             </div>
                             <div class="icon">
-                                <span>
+                                <span
+                                    @click="setInfo(item.filename,item.filedesc,item._id,item.delete)"
+                                    >
                                     <Icon type="edit" size="20"></Icon>
                                 </span>
-                                <span>
+                                <span 
+                                    :class="{star:item.star}" 
+                                    @click="changeStar(item._id,item.star)"
+                                >
                                     <Icon type="ios-star" size="22"></Icon>
                                 </span>
                             </div>
                         </li>
-                        <li class="project-grid-group__item addfile">
+                        <li 
+                            class="project-grid-group__item addfile" 
+                            @click="closeShade"
+                        >
                             <div class="plus">+</div>
                             <div class="new">创建新项目</div>
                         </li>
                     </ul>
                 </div>
-                <div class="project">
+                <div class="project" v-if="starData.length">
                     <h3>星标项目</h3>
+                    <ul class="project-grid-group__component">
+                        <li class="project-grid-group__item" v-for="item in starData">
+                            <div class="project-grid-group__card">
+                                <div class="project-name">{{item.filename}}</div>
+                                <div class="project-desc">{{item.filedesc}}</div>
+                            </div>
+                            <div class="icon">
+                                <span>
+                                    <Icon type="edit" size="20"></Icon>
+                                </span>
+                                <span :class="{star:item.star}" @click="changeStar(item._id,item.star)">
+                                    <Icon type="ios-star" size="22"></Icon>
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
-                <div class="project">
+                <div class="project" v-if="recycleData.length">
                     <h3>项目回收站</h3>
+                    <ul class="project-grid-group__component">
+                        <li class="project-grid-group__item" v-for="item in recycleData">
+                            <div class="project-grid-group__card">
+                                <div class="project-name">{{item.filename}}</div>
+                                <div class="project-desc">{{item.filedesc}}</div>
+                            </div>
+                            <div class="icon">
+                                <span @click="recycleBcck(item._id,item.delete)">
+                                    <Icon type="ios-loop-strong" size="22"></Icon>
+                                </span>
+                                <span @click="deleteProject(item._id)">
+                                    <Icon type="trash-a" size="22"></Icon>
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-        
     </div>
 </template>
 <script>
     import cookies from "js-cookie"
     export default {
+        data(){
+            return{
+                addState:false,
+                addProjectState:false,
+                setState:false,
+                createProjectName:'',
+                createProjectDesc:'',
+                changeFileName:'',
+                changeFileDesc:'',
+                projectId:'',
+                projectRecycle:false
+            }
+        },
         methods:{
             quit(){
                 this.$router.push({
                     path:"/login"
                 })
-                cookies.remove("loginState")
+                cookies.remove("loginId")
+            },
+            addFile(){
+                this.addState = !this.addState
+            },
+            newProject(){
+                this.addProjectState = !this.addProjectState
+                this.addState = !this.addState
+            },
+            closeShade(){
+                this.addProjectState = !this.addProjectState
+                this.createProjectName = ''
+                this.createProjectDesc = ''
+            },
+            finishCreateProject(){
+                if(this.createProjectName.trim()==''){
+                    alert("请输入项目名称")
+                    return
+                }
+                this.http.postCreateFile({
+                    user_id:cookies.get("loginId"),
+                    filename:this.createProjectName,
+                    filedesc:this.createProjectDesc
+                }).then(({data})=>{
+                    if(data.success){
+                        this.$store.commit('addNewFile',data.doc)
+                        this.addProjectState = !this.addProjectState
+                        this.createProjectName = ''
+                        this.createProjectDesc = ''
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            },
+            changeStar(id,s){
+                this.http.postStar({
+                    _id:id,
+                    star:s
+                }).then(({data})=>{
+                    if(data.success){
+                        this.$store.commit('isStar',id)
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            },
+            setInfo(a,b,c,d){
+                this.setState = !this.setState
+                this.changeFileName = a
+                this.changeFileDesc = b
+                this.projectId = c
+                this.projectRecycle = d
+            },
+            cancelChange(){
+                this.setState = !this.setState
+            },
+            changeRecycle(){
+                this.http.postRecycle({
+                    _id:this.projectId,
+                    delete:this.projectRecycle
+                }).then(({data})=>{
+                    if(data.success){
+                        this.$store.commit('isRecycle',this.projectId)
+                        this.setState = !this.setState
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            },
+            recycleBcck(a,b){
+                this.http.postRecycle({
+                    _id:a,
+                    delete:b
+                }).then(({data})=>{
+                    if(data.success){
+                        this.$store.commit('isRecycle',a)
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            },
+            deleteProject(id){
+                this.http.postDelete({
+                    _id:id
+                }).then(({data})=>{
+                    if(data.success){
+                        this.$store.commit('isDelete',id)
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            },
+            conformChange(){
+                this.http.postChangeName({
+                    _id:this.projectId,
+                    filename: this.changeFileName,
+                    filedesc: this.changeFileDesc
+                }).then(({data})=>{
+                    if(data.success){
+                        this.$store.commit('isChange',{
+                            _id:this.projectId,
+                            filename: this.changeFileName,
+                            filedesc: this.changeFileDesc
+                        })
+                        this.setState = !this.setState
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            }
+        },
+        computed:{
+            userData(){
+                return this.$store.state.userData.filter(item=>{
+                    return !item.delete
+                })
+            },
+            starData(){
+                return this.$store.state.userData.filter(item=>{
+                    return item.star&&!item.delete
+                })
+            },
+            recycleData(){
+                return this.$store.state.userData.filter(item=>{
+                    return item.delete
+                })
             }
         },
         created(){
-            if(!cookies.get("loginState")){
+            if(!cookies.get("loginId")){
                 this.$router.push({
                     path:"/login"
                 })
+                return
+            }else{
+                this.http.getUserFiles({
+                    user_id:cookies.get("loginId")
+                }).then((data)=>{
+                    this.$store.commit('allUserFile',data.data)
+                })
             }
+
         }
     }
 </script>
@@ -153,6 +349,7 @@
         position: absolute;
         right: 0;
         top: 0;
+        cursor: pointer;
     }
     .shade .shade_box  .pic{
         width: 113px;
@@ -191,7 +388,8 @@
         border: none;
         font: 14px/40px '微软雅黑';
         color: #fff;
-        background-color: rgba(12,119,226,.7)
+        background-color: rgba(12,119,226,.7);
+        cursor: pointer;
     }
     .shade .shade_box .mb25{
         margin-bottom: 25px;
@@ -325,6 +523,10 @@
         color:rgba(255,255,255,.8);
         margin-left:5px; 
         display: none;
+    }
+    .project-grid-group__item .icon .star{
+        color: yellow;
+        display: block;
     }
     .project-grid-group__item:hover{
         transform: translateY(-5px);

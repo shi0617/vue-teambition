@@ -28,15 +28,16 @@
                     this.http.postLogin({
                         username: this.username.trim(),
                         password: this.password.trim()
-                    }).then((data)=>{
-                        let loginData = data.data
-                        if(loginData.success){
+                    }).then(({data})=>{
+                        if(data.success){
                             this.username =''
                             this.password =''
                             this.$router.push({
                                 path:'/created'
                             })
-                            cookies.set('loginState',loginData.success)
+                            cookies.set('loginId',data.user_id)
+                        }else{
+                            alert(data.code)
                         }
                     })
                 }
@@ -52,11 +53,10 @@
                     this.http.postSignin({
                         username: this.username,
                         password: this.password
-                    }).then((data)=>{
-                        let signinData = data.data
+                    }).then(({data})=>{
                         this.username =''
                         this.password =''
-                        alert(signinData.code)
+                        alert(data.code)
                     })
                 }
             }

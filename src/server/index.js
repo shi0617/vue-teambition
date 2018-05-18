@@ -21,17 +21,52 @@ export function postSignin(params) {
     return teambition.post('/signin',params)
 }
 /*
+    得到用户项目
+*/
+export function getUserFiles(params) {
+    return teambition.get('/projects?user_id='+params.user_id)
+}
+/*
     新建项目
 */
 export function postCreateFile(params) {
     return teambition.post('/created',params)
+}
+/*
+    星标项目
+*/
+export function postStar(params) {
+    return teambition.post('/star',params)
+}
+/*
+    项目回收站
+*/
+export function postRecycle(params) {
+    return teambition.post('/recycle',params)
+}
+/*
+    删除项目
+*/
+export function postDelete(params) {
+    return teambition.post('/delete',params)
+}
+/*
+    改名称和描述
+*/
+export function postChangeName(params) {
+    return teambition.post('/change',params)
 }
 export default {
     install(Vue){
         Vue.prototype.http = {
             postLogin,
             postSignin,
-            postCreateFile
+            postCreateFile,
+            postStar,
+            postRecycle,
+            postDelete,
+            postChangeName,
+            getUserFiles
         }
     }
 }
