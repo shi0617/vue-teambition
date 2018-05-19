@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
-import Created from '@/components/Created'
+import Home from '@/components/Home'
+import Project from '@/components/details/Project'
+import Detail from '@/components/details/Detail'
+import Mission from '@/components/details/others/Mission'
 
 Vue.use(Router)
 
@@ -14,9 +17,30 @@ export default new Router({
             component: Login
         },
         {
-            path: '/created',
-            name: 'Created',
-            component: Created
+            path: '/home',
+            component: Home,
+            children:[
+                {
+                    path: '',
+                    name: 'Project',
+                    component: Project,
+                },
+                {
+                    path: 'detail',
+                    component: Detail,
+                    children:[
+                        {
+                            path: '',
+                            name: 'Mission',
+                            component: Mission,
+                        }
+                    ]
+                },
+                {
+                    path: '*',
+                    redirect: ''
+                  }
+            ]
         },
         {
           path: '*',

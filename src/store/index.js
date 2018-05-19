@@ -4,7 +4,10 @@ import cookies from "js-cookie"
 Vue.use(Vuex)
 let store = new Vuex.Store({
     state:{
-        userData:[]
+        userData:[],
+        addProjectState:false,
+        createProjectName:'',
+        createProjectDesc:'',
     },
     mutations:{
         allUserFile(state,payload){
@@ -12,6 +15,9 @@ let store = new Vuex.Store({
         },
         addNewFile(state,payload){
             state.userData.push(payload)
+            state.addProjectState = !state.addProjectState
+            state.createProjectName = ''
+            state.createProjectDesc = ''
         },
         isStar(state,payload){
             state.userData.map(item=>{
@@ -39,6 +45,14 @@ let store = new Vuex.Store({
             })
             state.userData[index].filename = payload.filename
             state.userData[index].filedesc = payload.filedesc
+        },
+        closeShade(state){
+            state.addProjectState = !state.addProjectState
+            state.createProjectName = ''
+            state.createProjectDesc = ''
+        },
+        newProject(state){
+            state.addProjectState = !state.addProjectState
         }
     },
     actions:{

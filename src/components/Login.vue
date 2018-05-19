@@ -33,7 +33,7 @@
                             this.username =''
                             this.password =''
                             this.$router.push({
-                                path:'/created'
+                                path:'/Home'
                             })
                             cookies.set('loginId',data.user_id)
                         }else{

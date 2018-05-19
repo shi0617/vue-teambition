@@ -53,7 +53,7 @@
                 </span>
             </div>
             <router-link 
-                :to="{name:'Created'}" 
+                :to="{name:'Home'}" 
                 class="title"
                 tag="h3"
             >
@@ -69,6 +69,25 @@
         </header>
         <div id="content">
             <div class="personal-portal-view">
+                <div class="project" v-if="starData.length">
+                    <h3>星标项目</h3>
+                    <ul class="project-grid-group__component">
+                        <li class="project-grid-group__item" v-for="item in starData">
+                            <div class="project-grid-group__card">
+                                <div class="project-name">{{item.filename}}</div>
+                                <div class="project-desc">{{item.filedesc}}</div>
+                            </div>
+                            <div class="icon">
+                                <span>
+                                    <Icon type="edit" size="20"></Icon>
+                                </span>
+                                <span :class="{star:item.star}" @click="changeStar(item._id,item.star)">
+                                    <Icon type="ios-star" size="22"></Icon>
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
                 <div class="project">
                     <h3>我的项目</h3>
                     <ul class="project-grid-group__component">
@@ -97,25 +116,6 @@
                         >
                             <div class="plus">+</div>
                             <div class="new">创建新项目</div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="project" v-if="starData.length">
-                    <h3>星标项目</h3>
-                    <ul class="project-grid-group__component">
-                        <li class="project-grid-group__item" v-for="item in starData">
-                            <div class="project-grid-group__card">
-                                <div class="project-name">{{item.filename}}</div>
-                                <div class="project-desc">{{item.filedesc}}</div>
-                            </div>
-                            <div class="icon">
-                                <span>
-                                    <Icon type="edit" size="20"></Icon>
-                                </span>
-                                <span :class="{star:item.star}" @click="changeStar(item._id,item.star)">
-                                    <Icon type="ios-star" size="22"></Icon>
-                                </span>
-                            </div>
                         </li>
                     </ul>
                 </div>
@@ -256,16 +256,20 @@
                 })
             },
             conformChange(){
+                if(this.changeFileName.trim()==''){
+                    alert('请输入项目名称')
+                    return
+                }
                 this.http.postChangeName({
                     _id:this.projectId,
-                    filename: this.changeFileName,
-                    filedesc: this.changeFileDesc
+                    filename: this.changeFileName.trim(),
+                    filedesc: this.changeFileDesc.trim()
                 }).then(({data})=>{
                     if(data.success){
                         this.$store.commit('isChange',{
                             _id:this.projectId,
-                            filename: this.changeFileName,
-                            filedesc: this.changeFileDesc
+                            filename: this.changeFileName.trim(),
+                            filedesc: this.changeFileDesc.trim()
                         })
                         this.setState = !this.setState
                     }else{
