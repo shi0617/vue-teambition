@@ -29,8 +29,10 @@
                 </MenuItem>
             </Menu>
             <div class="nav-right">
-                <a class="hover">视图</a>
-                <a class="hover">菜单</a>
+                <a class="hover">
+                    <Icon type="ios-settings"></Icon>
+                    菜单
+                </a>
             </div>
         </header>
         <router-view/>

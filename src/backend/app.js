@@ -286,3 +286,4 @@ app.post('/change',(req,res,next)=>{
 app.listen(8000,() => {
     console.log('服务已启动，port为:8000')
 });
+//F:\database\MongoDB\Server\3.6\bin    mongod -dbpath "F:\database\data"
