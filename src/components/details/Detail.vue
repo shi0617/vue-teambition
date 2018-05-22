@@ -2,13 +2,13 @@
     <div id="detail">
         <header class="head">
             <div class="nav-left">
-                <a class="hover">首页</a>
+                <router-link :to="{path:'/home'}" class="hover">首页</router-link>
                 <span style="margin: 0 5px;">
                     <Icon type="chevron-right" size="16"></Icon>
                 </span>
-                <a>123</a>
+                <a>{{$route.query.name}}</a>
                 <span style="margin: 0 5px;">
-                    <Icon type="ios-star" size="20"></Icon>
+                    <Icon type="ios-star" size="20" :class="{starColor:$route.query.star}"></Icon>
                 </span>
             </div>
             <Menu mode="horizontal"  active-name="1">
@@ -56,7 +56,6 @@
         right: 0;
         bottom: 0;
         overflow-y: auto;
-        background-color: pink;
     }
     #detail .head{
         height: 50px;
@@ -95,5 +94,8 @@
     }
     #detail .head .nav-right a{
         margin-left:10px;
+    }
+    .starColor{
+        color: yellow;
     }
 </style>

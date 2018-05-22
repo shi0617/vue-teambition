@@ -108,7 +108,6 @@ app.post('/signin', (req,res,next) => {
                     console.log(error)
                     return
                 }
-                console.log(docs)
             })
             res.json({
                 success:true,
@@ -282,6 +281,110 @@ app.post('/change',(req,res,next)=>{
             })
         }
     })
+})
+
+//--------------------------------项目详情-------------------------------------
+//项目任务Schema
+let projectMissionSchema = new mongoose.Schema({
+    pid:String,
+    mission_name:String,
+    mission_list:Array,
+    edit:Boolean
+})
+//项目任务model
+let projectMissionModel = mongoose.model('Mission',projectMissionSchema,'missioninfo');
+//获取项目任务
+app.get('/projectmissions',(req,res,next)=>{
+    console.log('获取项目任务')
+    let pid = req.query.pid
+    projectMissionModel.find({
+        pid:pid
+    },(err,doc)=>{
+        if(err){
+            console.log(err)
+            return
+        }
+        res.json(doc)
+    })
+})
+//新建项目任务
+app.post('/mission',(req,res,next)=>{
+    console.log('新建项目任务')
+    let name = req.body.name
+    let pid = req.body.pid
+    projectMissionModel.create({
+        mission_name:name,
+        mission_list:[],
+        pid:pid,
+        edit: false
+    },(err,doc)=>{
+        if(err){
+            return
+        }
+        if(doc){
+            res.json({
+                success: true,
+                code:"创建任务成功",
+                doc:doc
+            })
+        }else{
+            res.json({
+                success: false,
+                code:"创建任务失败"
+            })
+        }
+    })
+})
+//删除项目任务
+app.post('/deletemission',(req,res,next)=>{
+    console.log('删除项目任务')
+    let id = req.body.id
+    projectMissionModel.findOneAndDelete({
+        _id:id
+    },(err,doc)=>{
+        if(err){
+            return
+        }
+        if(doc){
+            res.json({
+                success: true,
+                code:"删除任务成功",
+                doc:doc
+            })
+        }else{
+            res.json({
+                success: false,
+                code:"删除任务失败"
+            })
+        }
+    })
+})
+//编辑项目任务
+app.post('/editmission',(req,res,next)=>{
+    console.log('编辑项目任务')
+    let id = req.body.id
+    let edit = req.body.edit
+    let name =  req.body.name
+    projectMissionModel.findOneAndUpdate({
+        _id:id
+    },name?{edit:!edit,mission_name:name}:{edit:!edit},(err,doc)=>{
+        if(err){
+            return
+        }
+        if(doc){
+            res.json({
+                success: true,
+                code:"编辑任务成功",
+                doc:doc
+            })
+        }else{
+            res.json({
+                success: false,
+                code:"编辑任务失败"
+            })
+        }
+    })
+    
 })
 app.listen(8000,() => {
     console.log('服务已启动，port为:8000')

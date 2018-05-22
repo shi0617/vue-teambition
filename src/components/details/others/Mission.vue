@@ -1,60 +1,184 @@
 <template>
     <div class="board-view">
         <ul class="list">
-            <li class="scrum-stage">
+            <li 
+                class="scrum-stage" 
+                v-for="item in list"
+            >
                 <header class="head">
-                    <div style="float: left">待处理</div>
+                    <div style="float: left">{{item.mission_name}}</div>
                     <div style="float: right;position:relative;">
-                        <a>
+                        <a 
+                            class="hoverColor"
+                            @click="editMission(item._id,item.edit,item.mission_name)"
+                        >
                             <Icon type="edit"></Icon>
-                            
                         </a>
-                        <a>
+                        <a 
+                            class="hoverColor"
+                            @click="deleteMission(item._id)"
+                        >
                             <Icon type="trash-a"></Icon>
                         </a>
-                        <div class="edit">
+                        <div class="edit" v-if="item.edit">
                             <div class="title">编辑列表</div>
-                            <input type="text" >
-                            <button>保存</button>
+                            <input 
+                                type="text" 
+                                v-focus="item.edit" 
+                                v-model="item.mission_name"
+                            >
+                            <button 
+                                style="margin-bottom: 10px;" 
+                                @click="confirmEdit(item._id,item.edit,item.mission_name)"
+                            >
+                                保存
+                            </button>
+                            <button @click="cancelEdit(item._id,item.edit)">取消</button>
                         </div>
                     </div>
                 </header>
                 <div class="content">
                     <ul class="con_list">
-                        <li>
-                            <span>1231244124</span>
-                            <Icon type="trash-a" size="20" style="line-height: 32px;"></Icon>
-                        </li>
-                        <li>
+                        <li v-for="i in item.mission_list">
                             <span>1231244124</span>
                             <Icon type="trash-a" size="20" style="line-height: 32px;"></Icon>
                         </li>
                     </ul>
                     <div class="add">
                         <a>
-                            <span style="font-size: 20px;">
+                            <span style="font-size:20px;">
                                 <Icon type="ios-plus"></Icon>
                             </span>
                             <span>添加任务</span>
                         </a>
                     </div>
+                    <div class="add_con" v-if="false">
+                        <textarea placeholder="任务内容"></textarea>
+                        <button>创建</button>
+                    </div>
                 </div>
             </li>
             <li class="scrum-stage" style="height: auto;">
-                <div class="new">
+                <div class="new" v-if="!missionState" @click="createNewMission">
                     +新建任务列表
                 </div>
-                <div class="new_box">
-                    <input type="text">
+                <div class="new_box" v-if="missionState">
+                    <input type="text" v-model="missionName" v-focus="missionState">
                     <div>
-                        <button class="color">取消</button>
-                        <button class="bgc">保存</button>
+                        <button 
+                            class="color"
+                            @click="cancelCreateNewMission"
+                        >
+                            取消
+                        </button>
+                        <button 
+                            class="bgc"
+                            @click="confirmCreateNewMission"
+                        >
+                            保存
+                        </button>
                     </div>
                 </div>
             </li>
         </ul>
     </div>
 </template>
+<script>
+    export default{
+        data(){
+            return{
+                list:[],
+                missionState:false,
+                missionName:'',
+                editState:false,   
+                editMissionName:''             
+            }
+        },
+        methods:{
+            createNewMission(){
+                this.missionState = !this.missionState
+            },
+            cancelCreateNewMission(){
+                this.missionState = !this.missionState
+                this.missionName = ''
+            },
+            confirmCreateNewMission(){
+                let pid = this.$route.query.id
+                let name = this.missionName
+                if(name == ''){
+                    alert('请输入任务名称')
+                    return
+                }
+                this.http.postCreateMission({pid,name})
+                .then(({data})=>{
+                    if(data.success){
+                        this.list.push(data.doc)
+                        this.missionState = !this.missionState
+                        this.missionName = ''
+                    }else(
+                        alert(data.code)
+                    )
+                })
+            },
+            deleteMission(id){
+                this.http.postDeleteMission({id})
+                .then(({data})=>{
+                    if(data.success){
+                        this.list = this.list.filter(item =>{
+                            return item._id != data.doc._id
+                        })
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            },
+            editMission(id,edit,name){
+                if(!edit){
+                    this.editMissionName = name
+                }
+                this.postEditMission(id,edit)
+            },
+            cancelEdit(id,edit){
+                this.postEditMission(id,edit)
+                this.list.forEach(item =>{
+                    if(item._id == id){
+                        item.mission_name = this.editMissionName
+                        this.editMissionName = ''
+                    }
+                })
+            },
+            confirmEdit(id,edit,name){
+                if(name ==""){
+                    alert("请输入任务名称")
+                    return
+                }
+                this.postEditMission(id,edit,name)
+            },
+            postEditMission(id,edit,name){
+                this.http.postEditMission({id,edit,name})
+                .then(({data})=>{
+                    if(data.success){
+                        this.list.forEach(item =>{
+                            if(item._id == id){
+                                item.edit = !item.edit
+                            }
+                        })
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            }
+
+        },
+        created(){
+            let pid = this.$route.query.id
+            this.http.getMissionsByPid({pid})
+            .then(({data})=>{
+                this.list= data
+            })
+        }
+    }
+</script>
 <style >
     ul{
         padding: 0;
@@ -142,12 +266,15 @@
         font: 20px/20px "微软雅黑";
         opacity:.8;
     }
+    .scrum-stage .head div .hoverColor:hover{
+        color:rgba(12,119,226,.8);
+    }
     .scrum-stage .head div .edit{
         position: absolute;
         top:25px;
         left: -100px;
         width: 254px;
-        height: 172px;
+        height: 230px;
         background-color: #fff;
         border-radius: 3px;
         box-shadow: 0 2px 2px 0 rgba(0,0,0,.3);
@@ -194,6 +321,37 @@
         display: block;
         padding: 14px 18px;
         font: 16px/20px "微软雅黑";
+    }
+    .scrum-stage .content .add_con {
+        padding:14px 10px;
+        margin: 8px;
+        margin-top: 0;
+        background-color:#fff;
+        border-radius: 3px;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+    }
+    .scrum-stage .content .add_con textarea{
+        display: block;
+        resize: none;
+        outline: none;
+        padding: 5px;
+        border-radius: 3px;
+        width:100%;
+        height: 80px;
+        margin-bottom: 10px;
+    }
+    .scrum-stage .content .add_con button{
+        display: block;
+        background-color: rgba(12,119,226,.8);
+        border: none;
+        border-radius: 3px;
+        width:100%;
+        height: 30px;
+        font: 16px/30px "微软雅黑";
+        color: #fff;
+    }
+    .scrum-stage .content .add_con button:hover{
+        background-color: rgba(12,119,226,.6)
     }
     .scrum-stage .content .con_list li{
         height: 52px;

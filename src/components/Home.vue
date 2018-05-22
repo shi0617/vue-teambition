@@ -8,9 +8,25 @@
                 </header>
                 <div class="pic"></div>
                 <div class="tag">为不同的事物建立不同的项目</div>
-                <input type="text" class="text" placeholder="项目名称（必填）" v-model="$store.state.createProjectName">
-                <textarea placeholder="项目简介（选填）" class="area" v-model="$store.state.createProjectDesc"></textarea>
-                <input value="完成并创建" type="button" class="sub" @click="finishCreateProject">
+                <input 
+                    type="text" 
+                    class="text" 
+                    placeholder="项目名称（必填）" 
+                    v-model="$store.state.createProjectName"
+                    v-focus="$store.state.addProjectState"
+                >
+                <textarea 
+                    placeholder="项目简介（选填）" 
+                    class="area" 
+                    v-model="$store.state.createProjectDesc"
+                >
+                </textarea>
+                <input 
+                    value="完成并创建" 
+                    type="button" 
+                    class="sub" 
+                    @click="finishCreateProject"
+                >
             </div>
         </div>
         <header class="head">

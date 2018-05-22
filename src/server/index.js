@@ -56,6 +56,30 @@ export function postDelete(params) {
 export function postChangeName(params) {
     return teambition.post('/change',params)
 }
+/*
+    获取任务
+*/
+export function getMissionsByPid(params) {
+    return teambition.get('/projectmissions?pid='+params.pid)
+}
+/*
+    新建任务
+*/
+export function postCreateMission(params) {
+    return teambition.post('/mission',params)
+}
+/*
+    删除任务
+*/
+export function postDeleteMission(params) {
+    return teambition.post('/deletemission',params)
+}
+/*
+    编辑任务
+*/
+export function postEditMission(params) {
+    return teambition.post('/editmission',params)
+}
 export default {
     install(Vue){
         Vue.prototype.http = {
@@ -66,7 +90,11 @@ export default {
             postRecycle,
             postDelete,
             postChangeName,
-            getUserFiles
+            postCreateMission,
+            postDeleteMission,
+            postEditMission,
+            getUserFiles,
+            getMissionsByPid
         }
     }
 }

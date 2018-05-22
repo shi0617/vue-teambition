@@ -6,7 +6,7 @@
                     <div class="title">项目设置</div> 
                 </header>
                 <div style="font-size:16px;line-height:24px;margin-bottom: 10px;">项目名称</div>
-                <input type="text" class="text mb25" v-model="changeFileName">
+                <input type="text" class="text mb25" v-model="changeFileName" v-focus="setState">
                 <div style="font-size:16px;line-height:24px;margin-bottom: 10px;">项目简介</div>
                 <textarea class="area mb25" v-model="changeFileDesc"></textarea>
                 <input 
@@ -30,11 +30,17 @@
                 <div class="project" v-if="starData.length">
                     <h3>星标项目</h3>
                     <ul class="project-grid-group__component">
-                        <li class="project-grid-group__item" v-for="item in starData">
-                            <div class="project-grid-group__card">
+                        <li class="project-grid-group__item" 
+                            v-for="item in starData"
+                        >
+                            <router-link
+                                :to = "{path:'home/detail',query:{id:item._id,name:item.filename,star:item.star}}"
+                                class="project-grid-group__card"
+                                tag="div"
+                            >
                                 <div class="project-name">{{item.filename}}</div>
                                 <div class="project-desc">{{item.filedesc}}</div>
-                            </div>
+                            </router-link>
                             <div class="icon">
                                 <span
                                     @click="setInfo(item.filename,item.filedesc,item._id,item.delete)"
@@ -56,7 +62,7 @@
                             v-for="item in userData"
                         >
                             <router-link 
-                                :to = "{path:'home/detail',query:{id:item._id}}"
+                                :to = "{path:'home/detail',query:{id:item._id,name:item.filename,star:item.star}}"
                                 class="project-grid-group__card"
                                 tag="div"
                             >
