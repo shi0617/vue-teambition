@@ -40,11 +40,18 @@
                 <div class="content">
                     <ul class="con_list">
                         <li v-for="i in item.mission_list">
-                            <span>1231244124</span>
-                            <Icon type="trash-a" size="20" style="line-height: 32px;"></Icon>
+                            <span class="span">{{i.title}}</span>
+                            <span class="a" @click="deleteThisMission(item._id,i.id)">
+                                <Icon 
+                                    type="trash-a" 
+                                    size="20" 
+                                    style="line-height: 32px;"
+                                >
+                                </Icon>
+                            </span>
                         </li>
                     </ul>
-                    <div class="add">
+                    <div class="add" @click="addMission(item._id,item._add)" v-if="!item.add">
                         <a>
                             <span style="font-size:20px;">
                                 <Icon type="ios-plus"></Icon>
@@ -52,9 +59,10 @@
                             <span>添加任务</span>
                         </a>
                     </div>
-                    <div class="add_con" v-if="false">
-                        <textarea placeholder="任务内容"></textarea>
-                        <button>创建</button>
+                    <div class="add_con" v-if="item.add">
+                        <textarea placeholder="任务内容" v-focus="item.add" v-model="item.title"></textarea>
+                        <button style="margin-bottom: 10px" @click="confirmAdd(item._id,item.add,item.title)">创建</button>
+                        <button @click="cancelAdd(item._id,item.add)">取消</button>
                     </div>
                 </div>
             </li>
@@ -91,7 +99,8 @@
                 missionState:false,
                 missionName:'',
                 editState:false,   
-                editMissionName:''             
+                editMissionName:'',
+                addMissionName:''         
             }
         },
         methods:{
@@ -167,15 +176,75 @@
                         alert(data.code)
                     }
                 })
+            },
+            addMission(id,add){
+                this.http.postAddMission({id,add})
+                .then(({data})=>{
+                    if(data.success){
+                        this.list.forEach(item =>{
+                            if(item._id == id){
+                                item.add = !item.add
+                            }
+                        })
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            },
+            cancelAdd(id,add){
+                this.http.postAddMission({id,add})
+                .then(({data})=>{
+                    if(data.success){
+                        this.list.forEach(item =>{
+                            if(item._id == id){
+                                item.add = !item.add
+                                item.title = ''
+                            }
+                        })
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            },
+            confirmAdd(id,add,title){
+                if(title==""){
+                    alert("请输入添加任务的名称")
+                    return
+                }
+                this.http.postAddMission({id,add,title})
+                .then(({data})=>{
+                    console.log(data)
+                    if(data.success){
+                        this.list.forEach(item =>{
+                            if(item._id == id){
+                                item.add = !item.add
+                                item.title = ''
+                            }
+                        })
+                        this.getMissionsByPid()
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            },
+            deleteThisMission(paid,id){
+                this.http.postDeleteThisMission({pid:paid,id})
+                .then(({data})=>{
+                    if(data.success){
+                        this.getMissionsByPid()
+                    }
+                })
+            },
+            getMissionsByPid(){
+                let pid = this.$route.query.id
+                this.http.getMissionsByPid({pid})
+                .then(({data})=>{
+                    this.list= data
+                })
             }
-
         },
         created(){
-            let pid = this.$route.query.id
-            this.http.getMissionsByPid({pid})
-            .then(({data})=>{
-                this.list= data
-            })
+            this.getMissionsByPid()
         }
     }
 </script>
@@ -366,10 +435,10 @@
         display:flex;
         justify-content: space-between;
     }
-    .scrum-stage .content .con_list li span{
+    .scrum-stage .content .con_list li .span{
         width: 90%;
     }
-    .scrum-stage .content .con_list li span:hover{
+    .scrum-stage .content .con_list li .span:hover{
         color: rgba(12,119,226,.8)
     }
     .scrum-stage .content .con_list li i{

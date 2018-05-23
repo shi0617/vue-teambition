@@ -5,6 +5,8 @@ import Home from '@/components/Home'
 import Project from '@/components/details/Project'
 import Detail from '@/components/details/Detail'
 import Mission from '@/components/details/others/Mission'
+import Chat from '@/components/details/others/Chat'
+import Share from '@/components/details/others/Share'
 
 Vue.use(Router)
 
@@ -33,6 +35,16 @@ export default new Router({
                             path: '',
                             name: 'Mission',
                             component: Mission,
+                        },
+                        {
+                            path: 'chat',
+                            name: 'Chat',
+                            component: Chat,
+                        },
+                        {
+                            path: 'share',
+                            name: 'Share',
+                            component: Share,
                         }
                     ]
                 },

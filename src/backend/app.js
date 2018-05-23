@@ -289,7 +289,9 @@ let projectMissionSchema = new mongoose.Schema({
     pid:String,
     mission_name:String,
     mission_list:Array,
-    edit:Boolean
+    edit:Boolean,
+    add:Boolean,
+    title:String
 })
 //项目任务model
 let projectMissionModel = mongoose.model('Mission',projectMissionSchema,'missioninfo');
@@ -316,7 +318,9 @@ app.post('/mission',(req,res,next)=>{
         mission_name:name,
         mission_list:[],
         pid:pid,
-        edit: false
+        edit: false,
+        add: false,
+        title:''
     },(err,doc)=>{
         if(err){
             return
@@ -385,6 +389,48 @@ app.post('/editmission',(req,res,next)=>{
         }
     })
     
+})
+//添加任务
+app.post('/addmission',(req,res,next)=>{
+    console.log('添加任务')
+    let id = req.body.id
+    let add = req.body.add
+    let title =  req.body.title
+    projectMissionModel.findOneAndUpdate({
+        _id:id
+    },title?{add:!add,$push:{mission_list:{id:Math.random(),title:title}}}:{add:!add},(err,doc)=>{
+        if(err){
+            console.log(err)
+            return
+        }
+        if(doc){
+            res.json({
+                success: true,
+                code:"添加任务成功"
+            })
+        }
+    })
+})
+//删除任务
+app.post('/deletethismission',(req,res,next)=>{
+    console.log('删除任务')
+    let pid = req.body.pid
+    let id = req.body.id
+    projectMissionModel.update({
+        _id:pid
+    },{$pull:{mission_list:{id:id}}},(err,doc)=>{
+        console.log(doc)
+        if(err){
+            console.log(err)
+            return
+        }
+        if(doc){
+            res.json({
+                success: true,
+                code:"删除任务成功"
+            })
+        }
+    })
 })
 app.listen(8000,() => {
     console.log('服务已启动，port为:8000')

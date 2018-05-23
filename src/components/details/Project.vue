@@ -34,7 +34,7 @@
                             v-for="item in starData"
                         >
                             <router-link
-                                :to = "{path:'home/detail',query:{id:item._id,name:item.filename,star:item.star}}"
+                                :to = "{path:'home/detail',query:{id:item._id,name:item.filename}}"
                                 class="project-grid-group__card"
                                 tag="div"
                             >

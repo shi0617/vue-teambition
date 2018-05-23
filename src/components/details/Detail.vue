@@ -7,25 +7,22 @@
                     <Icon type="chevron-right" size="16"></Icon>
                 </span>
                 <a>{{$route.query.name}}</a>
-                <span style="margin: 0 5px;">
-                    <Icon type="ios-star" size="20" :class="{starColor:$route.query.star}"></Icon>
-                </span>
             </div>
             <Menu mode="horizontal"  active-name="1">
                 <MenuItem name="1">
-                    <router-link :to="{name:'Mission'}">任务</router-link>
+                    <router-link :to="{name:'Mission'}" style="color:#495060">任务</router-link>
                 </MenuItem>
                 <MenuItem name="2">
-                    分享
+                    <router-link :to="{name:'Share'}" style="color:#495060">分享</router-link>
                 </MenuItem>
                 <MenuItem name="3">
-                    文件
+                    <router-link :to="{name:'Mission'}" style="color:#495060">文件</router-link>
                 </MenuItem>
                 <MenuItem name="4">
-                    日程
+                    <router-link :to="{name:'Mission'}" style="color:#495060">日程</router-link>
                 </MenuItem>
                 <MenuItem name="5">
-                    群聊
+                    <router-link :to="{name:'Chat'}" style="color:#495060">群聊</router-link>
                 </MenuItem>
             </Menu>
             <div class="nav-right">
