@@ -1,5 +1,42 @@
 <template>
     <div class="board-view">
+        <div class="change-box" v-if="true">
+            <div class="box">
+                <header class="box-head">任务设置</header>
+                <div>
+                    <div>
+                        <p>修改任务名称</p>
+                        <input type="text" class="mission-text" placeholder="任务名称">
+                    </div>
+                    <div>
+                        <p>设置截止时间</p>
+                        <Row style="margin-bottom: 20px;">
+                            <Col span="12">
+                                <DatePicker 
+                                    type="date" 
+                                    :options="options3" 
+                                    placeholder="选择截止日期" 
+                                    style="width: 125px;"
+                                >
+                                </DatePicker>
+                            </Col>
+                            <Col span="12">
+                                <TimePicker 
+                                    type="time" 
+                                    placeholder="选择截止时间" 
+                                    style="width: 125px;"
+                                >
+                                </TimePicker>
+                            </Col>
+                        </Row>
+                    </div>
+                    <div>
+                        <button>确定</button>
+                        <button>取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <ul class="list">
             <li 
                 class="scrum-stage" 
@@ -40,17 +77,20 @@
                 <div class="content">
                     <ul class="con_list">
                         <li v-for="i in item.mission_list">
-                            <span class="span">{{i.title}}</span>
-                            <span class="a" @click="deleteThisMission(item._id,i.id)">
-                                <Icon 
-                                    type="trash-a" 
-                                    size="20" 
-                                    style="line-height: 32px;"
-                                >
-                                </Icon>
-                            </span>
+                            <div class="mission-title">
+                                <span class="span">{{i.title}}</span>
+                                <span class="a" @click="deleteThisMission(item._id,i.id)">
+                                    <Icon 
+                                        type="trash-a" 
+                                        size="20" 
+                                        style="line-height: 32px;"
+                                    >
+                                    </Icon>
+                                </span>
+                            </div>
+                            <span class="time" v-if="i.date!=''">截止时间: {{i.date.slice(0,10)}} {{i.time}}</span>
                         </li>
-                    </ul>
+                    </ul> 
                     <div class="add" @click="addMission(item._id,item._add)" v-if="!item.add">
                         <a>
                             <span style="font-size:20px;">
@@ -61,7 +101,34 @@
                     </div>
                     <div class="add_con" v-if="item.add">
                         <textarea placeholder="任务内容" v-focus="item.add" v-model="item.title"></textarea>
-                        <button style="margin-bottom: 10px" @click="confirmAdd(item._id,item.add,item.title)">创建</button>
+                        <div style="margin-bottom: 10px;">设置截止日期时间</div>
+                        <Row style="margin-bottom: 10px;">
+                            <Col span="12">
+                                <DatePicker 
+                                    type="date" 
+                                    :options="options3" 
+                                    placeholder="选择截止日期" 
+                                    style="width: 120px;"
+                                    v-model="item.date"
+                                >
+                                </DatePicker>
+                            </Col>
+                            <Col span="12">
+                                <TimePicker 
+                                    type="time" 
+                                    placeholder="选择截止时间" 
+                                    style="width: 120px;"
+                                    v-model="item.time"
+                                >
+                                </TimePicker>
+                            </Col>
+                        </Row>
+                        <button 
+                            style="margin-bottom: 10px" 
+                            @click="confirmAdd(item._id,item.add,item.title,item.date,item.time)"
+                        >
+                            创建
+                        </button>
                         <button @click="cancelAdd(item._id,item.add)">取消</button>
                     </div>
                 </div>
@@ -100,7 +167,12 @@
                 missionName:'',
                 editState:false,   
                 editMissionName:'',
-                addMissionName:''         
+                addMissionName:'',
+                options3: {
+                    disabledDate (date) {
+                        return date && date.valueOf() < Date.now() - 86400000;
+                    }
+                },       
             }
         },
         methods:{
@@ -206,12 +278,12 @@
                     }
                 })
             },
-            confirmAdd(id,add,title){
+            confirmAdd(id,add,title,date,time){
                 if(title==""){
                     alert("请输入添加任务的名称")
                     return
                 }
-                this.http.postAddMission({id,add,title})
+                this.http.postAddMission({id,add,title,date,time})
                 .then(({data})=>{
                     console.log(data)
                     if(data.success){
@@ -219,6 +291,8 @@
                             if(item._id == id){
                                 item.add = !item.add
                                 item.title = ''
+                                item.date = ''
+                                item.time = ''
                             }
                         })
                         this.getMissionsByPid()
@@ -244,6 +318,7 @@
             }
         },
         created(){
+            this.$store.commit('page',"1")
             this.getMissionsByPid()
         }
     }
@@ -423,7 +498,6 @@
         background-color: rgba(12,119,226,.6)
     }
     .scrum-stage .content .con_list li{
-        height: 52px;
         margin: 8px;
         margin-top: 0;
         background-color:#fff;
@@ -432,13 +506,22 @@
         cursor:pointer;
         font: 14px/32px "微软雅黑";
         padding: 10px;
-        display:flex;
-        justify-content: space-between;
     }
-    .scrum-stage .content .con_list li .span{
+    .scrum-stage .content .con_list li .mission-title{
+        display:flex;
+        justify-content:space-between;
+    }
+    .scrum-stage .content .con_list li .time{
+        font: 12px/14px "微软雅黑";
+        background-color:orange;
+        color: #fff;
+        padding: 2px 5px; 
+        border-radius: 3px;
+    }
+    .scrum-stage .content .con_list li .mission-title .span{
         width: 90%;
     }
-    .scrum-stage .content .con_list li .span:hover{
+    .scrum-stage .content .con_list li .mission-title .span:hover{
         color: rgba(12,119,226,.8)
     }
     .scrum-stage .content .con_list li i{
@@ -449,5 +532,54 @@
     }
     .scrum-stage .content .con_list li:hover i{
         display: block;
+    }
+    .change-box{
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        background-color:rgba(0,0,0,.5);
+        display:flex;
+        z-index:9999;
+    }
+    .change-box .box{
+         width: 300px;
+         background-color: #fff;
+         margin: auto;
+         padding: 10px;
+         border-radius: 5px;
+    }
+    .change-box .box .box-head{
+        border-bottom: 1px solid rgba(0,0,0,.3);
+        padding-bottom: 10px;
+        font: 16px/20px "微软雅黑";
+        text-align: center;
+    }
+    .change-box .box p{
+        font: 14px/20px "微软雅黑";
+        padding: 10px 0 15px;
+    }
+    .change-box .box .mission-text{
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 5px;
+        border-radius: 3px;
+        border:1px solid rgba(0,0,0,.3);
+        font: 14px/20px "微软雅黑";
+    }
+    .change-box .box button{
+        display: block;
+        font: 16px/30px "微软雅黑";
+        border:none;
+        color:#fff;
+        width: 100%;
+        background-color:rgba(12,119,226,.8);
+        cursor:pointer;
+        border-radius: 3px;
+        margin-bottom: 15px;
+    }
+    .change-box .box button:hover{
+        background-color:rgba(12,119,226,.6);
     }
 </style>

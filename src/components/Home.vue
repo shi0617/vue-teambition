@@ -209,7 +209,6 @@
         width: 100%;
         display: flex;
         justify-content: space-between;
-        z-index: 99;
     }
     .head .title,.head .tag,.head .search_new{
         height: 100%;

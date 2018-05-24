@@ -45,13 +45,17 @@ export default new Router({
                             path: 'share',
                             name: 'Share',
                             component: Share,
+                        },
+                        {
+                            path: '*',
+                            redirect: ''
                         }
                     ]
                 },
                 {
                     path: '*',
                     redirect: ''
-                  }
+                }
             ]
         },
         {

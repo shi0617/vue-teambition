@@ -291,7 +291,9 @@ let projectMissionSchema = new mongoose.Schema({
     mission_list:Array,
     edit:Boolean,
     add:Boolean,
-    title:String
+    title:String,
+    date:String,
+    time:String
 })
 //项目任务model
 let projectMissionModel = mongoose.model('Mission',projectMissionSchema,'missioninfo');
@@ -320,7 +322,9 @@ app.post('/mission',(req,res,next)=>{
         pid:pid,
         edit: false,
         add: false,
-        title:''
+        title:'',
+        date:'',
+        time:''
     },(err,doc)=>{
         if(err){
             return
@@ -396,9 +400,11 @@ app.post('/addmission',(req,res,next)=>{
     let id = req.body.id
     let add = req.body.add
     let title =  req.body.title
+    let date = req.body.date
+    let time =  req.body.time
     projectMissionModel.findOneAndUpdate({
         _id:id
-    },title?{add:!add,$push:{mission_list:{id:Math.random(),title:title}}}:{add:!add},(err,doc)=>{
+    },title?{add:!add,$push:{mission_list:{id:Math.random(),title:title,date,time}}}:{add:!add},(err,doc)=>{
         if(err){
             console.log(err)
             return
@@ -419,7 +425,6 @@ app.post('/deletethismission',(req,res,next)=>{
     projectMissionModel.update({
         _id:pid
     },{$pull:{mission_list:{id:id}}},(err,doc)=>{
-        console.log(doc)
         if(err){
             console.log(err)
             return

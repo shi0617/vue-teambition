@@ -8,6 +8,7 @@ let store = new Vuex.Store({
         addProjectState:false,
         createProjectName:'',
         createProjectDesc:'',
+        page:"1"
     },
     mutations:{
         allUserFile(state,payload){
@@ -53,6 +54,9 @@ let store = new Vuex.Store({
         },
         newProject(state){
             state.addProjectState = !state.addProjectState
+        },
+        page(state,payload){
+            state.page = payload
         }
     },
     actions:{

@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>Teambition</h1>
-        <input type="text" placeholder="请输入账号" class="text" v-model="username">
+        <input type="text" placeholder="请输入账号" class="text" v-model="username" v-focus="loginState">
         <input type="password" placeholder="请输入密码" class="text" v-model="password">
         <input type="button" value="登录" class="btn_sub" @click="userLogin">
         <input type="submit" value="注册" class="btn_sub" @click="userSignin">
@@ -13,7 +13,8 @@
         data(){
             return{
                 username:'',
-                password:''
+                password:'',
+                loginState:flase
             }
         },
         methods:{
@@ -60,6 +61,9 @@
                     })
                 }
             }
+        },
+        created(){
+            this.loginState = true
         }
     }
     
@@ -75,7 +79,6 @@
     input{
         display: block;
         margin: 0 auto;
-        outline: none;
     }
     .text{
         width: 346px;

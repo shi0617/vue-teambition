@@ -6,23 +6,67 @@
                 <span style="margin: 0 5px;">
                     <Icon type="chevron-right" size="16"></Icon>
                 </span>
-                <a>{{$route.query.name}}</a>
+                <a>{{name}}</a>
             </div>
-            <Menu mode="horizontal"  active-name="1">
-                <MenuItem name="1">
-                    <router-link :to="{name:'Mission'}" style="color:#495060">任务</router-link>
+            <Menu 
+                mode="horizontal"  
+                :active-name="$store.state.page"
+                style="z-index:0"
+            >
+                <MenuItem 
+                    name="1" 
+                    style="padding:0;width:72px;"
+                >
+                    <router-link 
+                        :to="{name:'Mission',query:{name:name,id:id}}" 
+                        style="color:#495060;display: block;text-align:center;"
+                    >
+                        任务
+                    </router-link>
                 </MenuItem>
-                <MenuItem name="2">
-                    <router-link :to="{name:'Share'}" style="color:#495060">分享</router-link>
+                <MenuItem 
+                    name="2" 
+                    style="padding:0;width:72px;"
+                >
+                    <router-link 
+                        :to="{name:'Share',query:{name:name,id:id}}" 
+                        style="color:#495060;display: block;text-align:center"
+                    >
+                        分享
+                    </router-link>
                 </MenuItem>
-                <MenuItem name="3">
-                    <router-link :to="{name:'Mission'}" style="color:#495060">文件</router-link>
+                <MenuItem 
+                    name="3" 
+                    style="padding:0;width:72px;"
+                >
+                    <router-link 
+                        :to="{name:'Mission',query:{name:name,id:id}}" 
+                        style="color:#495060;display: block;text-align:center"
+                    >
+                        文件
+                    </router-link>
                 </MenuItem>
-                <MenuItem name="4">
-                    <router-link :to="{name:'Mission'}" style="color:#495060">日程</router-link>
+                <MenuItem 
+                    name="4" 
+                    style="padding:0;width:72px;"
+                >
+                    <router-link 
+                        :to="{name:'Mission',query:{name:name,id:id}}" 
+                        style="color:#495060;display: block;text-align:center"
+                    >
+                        日程
+                    </router-link>
                 </MenuItem>
-                <MenuItem name="5">
-                    <router-link :to="{name:'Chat'}" style="color:#495060">群聊</router-link>
+                <MenuItem 
+                    name="5" 
+                    style="padding:0;width:72px;"
+                >
+                    <router-link 
+                        :to="{name:'Chat',query:{name:name,id:id}}" 
+                        style="color:#495060;display: block;text-align:center"
+                    >
+                        群聊
+                    </router-link>
                 </MenuItem>
             </Menu>
             <div class="nav-right">
@@ -39,9 +83,9 @@
     export default {
         data () {
             return {
+                name: this.$route.query.name,
+                id: this.$route.query.id
             }
-        },
-        created(){
         }
     }
 </script>
@@ -55,8 +99,9 @@
         overflow-y: auto;
     }
     #detail .head{
-        height: 50px;
+        height: 51px;
         background-color: #f1f1f1;
+        border-bottom: 1px solid #d1d1d1;
         display:flex;
         justify-content: space-between;
         padding: 0 10px;
