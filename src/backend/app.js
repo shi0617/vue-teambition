@@ -437,6 +437,47 @@ app.post('/deletethismission',(req,res,next)=>{
         }
     })
 })
+//修改任务
+app.post('/changethismission',(req,res,next)=>{
+    console.log('次改任务')
+    let pid = req.body.pid
+    let id = req.body.id
+    let title = req.body.title
+    let date = req.body.date.slice(0,10)
+    let time = req.body.time
+    projectMissionModel.findOne({
+        _id:pid
+    },(err,doc)=>{
+        if(err){
+            console.log(err)
+            return
+        }
+        if(doc){
+            doc.mission_list.forEach(item=>{
+                if(item.id == id){
+                    item.time = time
+                    item.date = date
+                    item.title = title
+                }
+            })
+            doc.save((erro,docu)=>{
+                projectMissionModel.update({
+                    _id:pid
+                },{$set:{mission_list:docu.mission_list}},
+                (error,docum)=>{
+                    if(docum){
+                        res.json(
+                            {
+                                success: true,
+                                code:"修改任务成功"
+                            }
+                        )
+                    }
+                })
+            })
+        }
+    })
+})
 app.listen(8000,() => {
     console.log('服务已启动，port为:8000')
 });

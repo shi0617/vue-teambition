@@ -92,6 +92,12 @@ export function postAddMission(params) {
 export function postDeleteThisMission(params) {
     return teambition.post('/deletethismission',params)
 }
+/*
+    修改任务
+*/
+export function postChangeThisMission(params) {
+    return teambition.post('/changethismission',params)
+}
 export default {
     install(Vue){
         Vue.prototype.http = {
@@ -107,6 +113,7 @@ export default {
             postEditMission,
             postAddMission,
             postDeleteThisMission,
+            postChangeThisMission,
             getUserFiles,
             getMissionsByPid
         }

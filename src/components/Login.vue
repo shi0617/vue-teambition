@@ -14,7 +14,7 @@
             return{
                 username:'',
                 password:'',
-                loginState:flase
+                loginState:false
             }
         },
         methods:{

@@ -1,12 +1,17 @@
 <template>
     <div class="board-view">
-        <div class="change-box" v-if="true">
+        <div class="change-box" v-if="changeState">
             <div class="box">
                 <header class="box-head">任务设置</header>
                 <div>
                     <div>
                         <p>修改任务名称</p>
-                        <input type="text" class="mission-text" placeholder="任务名称">
+                        <input 
+                            type="text" 
+                            class="mission-text" 
+                            placeholder="任务名称"
+                            v-model="change.title"
+                        >
                     </div>
                     <div>
                         <p>设置截止时间</p>
@@ -17,6 +22,7 @@
                                     :options="options3" 
                                     placeholder="选择截止日期" 
                                     style="width: 125px;"
+                                    v-model="change.date"
                                 >
                                 </DatePicker>
                             </Col>
@@ -25,14 +31,15 @@
                                     type="time" 
                                     placeholder="选择截止时间" 
                                     style="width: 125px;"
+                                    v-model="change.time"
                                 >
                                 </TimePicker>
                             </Col>
                         </Row>
                     </div>
                     <div>
-                        <button>确定</button>
-                        <button>取消</button>
+                        <button @click="confirmChangeTimeMission">确定</button>
+                        <button @click="cancelChangeTimeMission">取消</button>
                     </div>
                 </div>
             </div>
@@ -76,10 +83,10 @@
                 </header>
                 <div class="content">
                     <ul class="con_list">
-                        <li v-for="i in item.mission_list">
+                        <li v-for="i in item.mission_list" @click="changeTimeMission(item._id,i.id,i.title,i.date,i.time)">
                             <div class="mission-title">
                                 <span class="span">{{i.title}}</span>
-                                <span class="a" @click="deleteThisMission(item._id,i.id)">
+                                <span class="a" @click.stop="deleteThisMission(item._id,i.id)">
                                     <Icon 
                                         type="trash-a" 
                                         size="20" 
@@ -168,6 +175,14 @@
                 editState:false,   
                 editMissionName:'',
                 addMissionName:'',
+                changeState:false,
+                change:{
+                    pid:'',
+                    id:'',
+                    title:'',
+                    date:'',
+                    time:''
+                },
                 options3: {
                     disabledDate (date) {
                         return date && date.valueOf() < Date.now() - 86400000;
@@ -314,6 +329,30 @@
                 this.http.getMissionsByPid({pid})
                 .then(({data})=>{
                     this.list= data
+                })
+            },
+            changeTimeMission(pid,id,title,date,time){
+                this.changeState = true
+                this.change.pid = pid
+                this.change.id = id
+                this.change.title =title,
+                this.change.date = date
+                this.change.time = time
+            },
+            cancelChangeTimeMission(){
+                this.changeState = false
+            },
+            confirmChangeTimeMission(){
+                if(this.change.title==''){
+                    alert(' 请输入修改内容')
+                    return
+                }
+                this.changeState = false
+                this.http.postChangeThisMission(this.change)
+                .then(({data})=>{
+                    if(data.success){
+                        this.getMissionsByPid()
+                    }
                 })
             }
         },

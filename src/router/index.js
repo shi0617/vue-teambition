@@ -7,6 +7,7 @@ import Detail from '@/components/details/Detail'
 import Mission from '@/components/details/others/Mission'
 import Chat from '@/components/details/others/Chat'
 import Share from '@/components/details/others/Share'
+import File from '@/components/details/others/File'
 
 Vue.use(Router)
 
@@ -45,6 +46,11 @@ export default new Router({
                             path: 'share',
                             name: 'Share',
                             component: Share,
+                        },
+                        {
+                            path: 'file',
+                            name: 'File',
+                            component: File,
                         },
                         {
                             path: '*',

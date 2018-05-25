@@ -378,7 +378,7 @@
         width: 254px;
         height: 128px;
         padding: 8px 16px;
-        background:url(https://mailimg.teambition.com/logos/cover-media.jpg) no-repeat;
+        background:url(../../assets/cover-media.jpg) no-repeat;
         background-size: 100% 100%;
         border-radius: 5px;
     }

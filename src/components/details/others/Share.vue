@@ -31,7 +31,6 @@
 <style>
     #share{
         position:fixed;
-        position: fixed;
         top: 99px;
         right: 0;
         bottom: 0;
