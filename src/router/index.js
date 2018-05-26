@@ -8,6 +8,7 @@ import Mission from '@/components/details/others/Mission'
 import Chat from '@/components/details/others/Chat'
 import Share from '@/components/details/others/Share'
 import File from '@/components/details/others/File'
+import Folder from '@/components/details/others/files/Folder'
 
 Vue.use(Router)
 
@@ -49,8 +50,14 @@ export default new Router({
                         },
                         {
                             path: 'file',
-                            name: 'File',
                             component: File,
+                            children:[
+                                {
+                                    path: '',
+                                    name: 'Folder',
+                                    component: Folder,
+                                }
+                            ]
                         },
                         {
                             path: '*',

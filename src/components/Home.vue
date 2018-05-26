@@ -97,6 +97,9 @@
                     filedesc:this.$store.state.createProjectDesc
                 }).then(({data})=>{
                     if(data.success){
+                        let pid= data.doc._id
+                        this.http.postCreateMission({pid,name:"待处理"})
+                        this.http.postCreateMission({pid,name:"处理中"})
                         this.$store.commit('addNewFile',data.doc)
                     }else{
                         alert(data.code)
