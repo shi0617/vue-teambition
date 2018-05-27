@@ -478,6 +478,15 @@ app.post('/changethismission',(req,res,next)=>{
         }
     })
 })
+//--------------------------------新建文件夹-------------------------------------
+//项目任务Schema
+let createFolderSchema = new mongoose.Schema({
+    pid:String,
+    edit:Boolean,
+    title:String,
+})
+//项目任务model
+let createFolderModel = mongoose.model('Folder',createFolderSchema,'folderinfo');
 app.listen(8000,() => {
     console.log('服务已启动，port为:8000')
 });
