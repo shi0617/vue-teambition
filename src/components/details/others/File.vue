@@ -5,7 +5,7 @@
                 <div class="header-nav">
                     <span>文件库</span>
                     <div >
-                        <a>                      
+                        <a @click="createFolder">                      
                             创建文件夹
                         </a>
                         <a style="margin-left: 10px;">
@@ -22,11 +22,11 @@
                     <div class="func">
                         <a>
                             <Icon type="arrow-move"></Icon>
-                            <span>移动到</span>
+                            <span>移动选中</span>
                         </a>
                         <a>
                             <Icon type="trash-a"></Icon>
-                            <span>删除</span>
+                            <span>删除选中</span>
                         </a>
                     </div>
                 </div>
@@ -42,6 +42,11 @@
         data(){
             return{
                 single: false
+            }
+        },
+        methods:{
+            createFolder(){
+                this.$store.commit('createFolder')
             }
         },
         created(){
@@ -132,10 +137,12 @@
         color:rgba(12,119,226,.8);
     }
     #file .library-content .list li .li-left .input{
+        position: absolute;
+        top: 18px;
+        left: 60px;
         height: 20px;
         padding-left:5px;
         border-radius: 3px;
-        margin-left: 30px;
         border: 1px solid rgba(0,0,0,.2);
     }
     #file .library-content .list li .li-right{

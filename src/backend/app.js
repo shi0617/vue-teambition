@@ -64,8 +64,7 @@ app.post('/login', (req,res,next) => {
                         success:true,
                         code:'登陆成功',
                         user_id: docu._id
-                    });
-                    console.log(docu)
+                    })
                 }else{
                     res.json({
                         success:false,
@@ -484,9 +483,41 @@ let createFolderSchema = new mongoose.Schema({
     pid:String,
     edit:Boolean,
     title:String,
+    checked:Boolean
 })
 //项目任务model
 let createFolderModel = mongoose.model('Folder',createFolderSchema,'folderinfo');
+//创建文件夹
+app.post('/createfolder',(req,res,next)=>{
+    console.log('创建文件夹')
+    let title = req.body.title
+    let pid = req.body.pid
+    console.log(req.body)
+    createFolderModel.create({
+        pid:pid,
+        edit:false,
+        title:title,
+        checked:false
+    },(err,doc)=>{
+        if(err){
+            console.log(err)
+            return
+        }
+        if(doc){
+            res.json({
+                success:true,
+                code:"创建文件夹成功",
+                doc:doc
+            })
+        }else{
+            res.json({
+                success:false,
+                code:"创建文件夹失败"
+            })
+        }
+    })
+})
+
 app.listen(8000,() => {
     console.log('服务已启动，port为:8000')
 });

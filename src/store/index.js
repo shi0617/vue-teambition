@@ -8,7 +8,8 @@ let store = new Vuex.Store({
         addProjectState:false,
         createProjectName:'',
         createProjectDesc:'',
-        page:"1"
+        page:"1",
+        createFolderState: false
     },
     mutations:{
         allUserFile(state,payload){
@@ -57,6 +58,9 @@ let store = new Vuex.Store({
         },
         page(state,payload){
             state.page = payload
+        },
+        createFolder(state){
+            state.createFolderState = !state.createFolderState
         }
     },
     actions:{
