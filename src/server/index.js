@@ -99,10 +99,22 @@ export function postChangeThisMission(params) {
     return teambition.post('/changethismission',params)
 }
 /*
-    修改任务
+    获取文件夹
+*/
+export function getFolder(params) {
+    return teambition.get('/getfolder?pid='+ params.pid)
+}
+/*
+    创建文件夹
 */
 export function postCreateFolder(params) {
     return teambition.post('/createfolder',params)
+}
+/*
+    删除文件夹
+*/
+export function postDeleteFolder(params) {
+    return teambition.post('/deletefolder',params)
 }
 export default {
     install(Vue){
@@ -121,6 +133,8 @@ export default {
             postDeleteThisMission,
             postChangeThisMission,
             postCreateFolder,
+            postDeleteFolder,
+            getFolder,
             getUserFiles,
             getMissionsByPid
         }

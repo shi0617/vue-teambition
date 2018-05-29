@@ -487,12 +487,37 @@ let createFolderSchema = new mongoose.Schema({
 })
 //项目任务model
 let createFolderModel = mongoose.model('Folder',createFolderSchema,'folderinfo');
+//获取文件夹
+app.get('/getfolder',(req,res,next)=>{
+    console.log('获取文件夹')
+    let pid = req.query.pid
+    createFolderModel.find({
+        pid
+    },(err,doc)=>{
+        if(err){
+            console.log(err)
+            return
+        }
+        if(doc){
+            console.log(doc)
+            res.json({
+                success:true,
+                code:"获取文件夹成功",
+                doc:doc
+            })
+        }else{
+            res.json({
+                success:false,
+                code:"获取文件夹失败"
+            })
+        }
+    })
+})
 //创建文件夹
 app.post('/createfolder',(req,res,next)=>{
     console.log('创建文件夹')
     let title = req.body.title
     let pid = req.body.pid
-    console.log(req.body)
     createFolderModel.create({
         pid:pid,
         edit:false,
@@ -517,7 +542,30 @@ app.post('/createfolder',(req,res,next)=>{
         }
     })
 })
-
+//创建文件夹
+app.post('/deletefolder',(req,res,next)=>{
+    console.log('删除文件夹')
+    let _id = req.body.id
+    createFolderModel.findOneAndDelete({
+        _id
+    },(err,doc)=>{
+        if(err){
+            return
+        }
+        if(doc){
+            res.json({
+                success: true,
+                code:"删除文件夹成功",
+                doc:doc
+            })
+        }else{
+            res.json({
+                success: false,
+                code:"删除文件夹失败"
+            })
+        }
+    })
+})
 app.listen(8000,() => {
     console.log('服务已启动，port为:8000')
 });

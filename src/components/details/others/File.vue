@@ -139,7 +139,7 @@
     #file .library-content .list li .li-left .input{
         position: absolute;
         top: 18px;
-        left: 60px;
+        left: 55px;
         height: 20px;
         padding-left:5px;
         border-radius: 3px;
