@@ -18,9 +18,13 @@
         <div class="library-header-wrapper" style="top:176px;margin-top:0;">
             <div class="library-header" style="margin-top:0;border-radius:0;">
                 <div class="header-nav" style="justify-content:flex-start;">
-                    <Checkbox v-model="single" size="large" style="font-size:16px;">全选</Checkbox>
+                    <Checkbox 
+                        v-model="checkedAll" 
+                        size="large" 
+                        style="font-size:16px;"
+                    >全选</Checkbox>
                     <div class="func">
-                        <a>
+                        <a v-if="false">
                             <Icon type="arrow-move"></Icon>
                             <span>移动选中</span>
                         </a>
@@ -41,12 +45,22 @@
     export default{
         data(){
             return{
-                single: false
+
             }
         },
         methods:{
             createFolder(){
                 this.$store.commit('createFolder')
+            }
+        },
+        computed:{
+            checkedAll:{
+                get(){
+                    return this.$store.getters.checkedAll
+                },
+                set(){
+                    this.$store.commit('changeChecked',!this.$store.getters.checkedAll)
+                }
             }
         },
         created(){

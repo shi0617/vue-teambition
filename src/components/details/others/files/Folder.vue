@@ -1,8 +1,13 @@
 <template>
     <ul class="list">
-        <li v-for="item in folderData">
+        <li
+            v-for="item in folderData"
+            @click="thisFolder($event,item._id)"
+        >
             <div class="li-left">
-                <Checkbox size="large" v-nodel="item.checked" ></Checkbox>
+                <Checkbox size="large" 
+                    v-model='item.checked' 
+                    @on-change="checkedOne(item._id,item.checked)"></Checkbox>
                 <span 
                     style="margin-left: 30px;" 
                     v-if="true"
@@ -15,13 +20,15 @@
                     v-if="item.edit" 
                     v-focus="item.edit" 
                     v-model="item.title"
+                    @keyup.enter="confirmChangeTitle(item._id,item.title)"
+                    @keyup.esc="cancelChangeTitle(item._id)"
                 >
                 <span class="folder">
                     <Icon type="folder"></Icon>
                 </span> 
             </div>
             <div class="li-right">
-                <span>
+                <span v-if="false">
                     <Icon type="arrow-move"></Icon>
                     <p>移动</p>
                 </span>
@@ -43,6 +50,8 @@
                     class="input" 
                     v-focus="$store.state.createFolderState"
                     v-model="folderName"
+                    @keyup.enter="confirmCreateFolder"
+                    @keyup.esc="cancelCreateFolder"
                 >
                 <span class="folder">
                     <Icon type="folder"></Icon>
@@ -64,10 +73,26 @@
         data(){
             return{
                 folderName:'',
-                folderData:[]
+                name:this.$route.query.name,
+                id:this.$route.query.id
             }
         },
         methods:{
+            thisFolder(ev,pid){
+                let targrt = ev.target
+                if(targrt.nodeName=='INPUT' || targrt.nodeName=='I') return
+                
+                this.$router.push({
+                    query:{
+                        pid,
+                        name:this.name,
+                        id: this.id
+                    }
+                })
+            },
+            checkedOne(id,checked){
+                this.$store.commit('checkedOne',{id,checked})
+            },
             cancelCreateFolder(){
                 this.$store.commit('createFolder')
                 this.folderName = ''
@@ -82,7 +107,7 @@
                 pid = pid||id
                 this.http.postCreateFolder({pid,title:this.folderName})
                 .then(({data})=>{
-                    this.folderData.push(data.doc)
+                    this.$store.commit('confirmCreateFolder',data.doc)
                     this.cancelCreateFolder()
                 })
             },
@@ -90,35 +115,60 @@
                 this.http.postDeleteFolder({id})
                 .then(({data})=>{
                     if(data.success){
-                        this.folderData = this.folderData.filter(item=>{
-                            return item._id != id
-                        })
+                        this.$store.commit('deleteFolder',id)
                     }else{
-                        alert(data.doc)
+                        alert(data.code)
                     }
                     
                 })
             },
             editFolder(id){
-                this.folderData.forEach(item=>{
-                    if(id == item._id){
-                        item.edit = true
+                this.$store.commit('editFolder',id)
+            },
+            confirmChangeTitle(id,title){
+                if(title == ''){
+                    alert('请输入名称')
+                    return
+                }
+                this.http.postChangeFolder({id,title})
+                .then(({data})=>{
+                    if(data.success){
+                        this.$store.commit('confirmChangeTitle',id)
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            },
+            cancelChangeTitle(id){
+                this.$store.commit('cancelChangeTitle',id)
+            },
+            getFolder(){
+                let id = this.$route.query.id
+                let pid = this.$route.query.pid
+                pid = pid||id
+                this.http.getFolder({pid})
+                .then(({data})=>{
+                    if(data.success){
+                        this.$store.commit('getFolder',data.doc)
+                    }else{
+                        alert(data.code)
                     }
                 })
             }
         },
+        watch:{
+            $route:{
+                handler:'getFolder',
+                immediate:true
+            }
+        },
         created(){
-            let id = this.$route.query.id
-            let pid = this.$route.query.pid
-            pid = pid||id
-            this.http.getFolder({pid})
-            .then(({data})=>{
-                if(data.success){
-                    this.folderData = data.doc
-                }else{
-                    alert(data.code)
-                }
-            })
+            this.getFolder()
+        },
+        computed:{
+            folderData(){
+                return this.$store.state.folderData
+            }
         }
     }
 </script>

@@ -9,9 +9,18 @@ let store = new Vuex.Store({
         createProjectName:'',
         createProjectDesc:'',
         page:"1",
-        createFolderState: false
+        createFolderState: false,
+        folderData:[],
+        beforeChangeName:''
     },
     mutations:{
+        checkedOne(state,payload){
+            state.folderData.forEach(item=>{
+                if(payload.id == item._id){
+                    item.checked = payload.checked
+                }
+            })
+        },
         allUserFile(state,payload){
             state.userData = payload
         },
@@ -61,13 +70,61 @@ let store = new Vuex.Store({
         },
         createFolder(state){
             state.createFolderState = !state.createFolderState
+        },
+        editFolder(state,payload){
+            state.folderData.forEach(item=>{
+                if(payload == item._id){
+                    item.edit = true
+                    state.beforeChangeName = item.title
+                }else{
+                    item.edit = false
+                }
+            })
+        },
+        confirmChangeTitle(state,payload){
+            state.folderData.forEach(item=>{
+                if(payload == item._id){
+                    item.edit = false
+                    state.beforeChangeName = ''
+                }
+            })
+        },
+        cancelChangeTitle(state,payload){
+            state.folderData.forEach(item=>{
+                if(payload == item._id){
+                    item.edit = false
+                    item.title = state.beforeChangeName
+                    state.beforeChangeName = ''
+                }
+            })
+        },
+        getFolder(state,payload){
+            state.folderData = payload
+        },
+        deleteFolder(state,payload){
+            state.folderData = state.folderData.filter(item=>{
+                return item._id != payload
+            })
+        },
+        confirmCreateFolder(state,payload){
+            state.folderData.push(payload)
+        },
+        changeChecked(state,payload){
+            state.folderData.forEach(item=>{
+                item.checked = payload
+            })
         }
     },
     actions:{
         
     },
     getters:{  // 都会挂载在当前实例的getters对象下
-        
+        checkedAll(state){
+            if(!state.folderData.length){
+                return false
+            }
+            return state.folderData.every(item=>item.checked)
+        }
     },
     modules:{}
 })

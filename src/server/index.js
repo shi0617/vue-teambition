@@ -116,6 +116,12 @@ export function postCreateFolder(params) {
 export function postDeleteFolder(params) {
     return teambition.post('/deletefolder',params)
 }
+/*
+    修改文件夹名称文件夹
+*/
+export function postChangeFolder(params) {
+    return teambition.post('/changefolder',params)
+}
 export default {
     install(Vue){
         Vue.prototype.http = {
@@ -134,6 +140,7 @@ export default {
             postChangeThisMission,
             postCreateFolder,
             postDeleteFolder,
+            postChangeFolder,
             getFolder,
             getUserFiles,
             getMissionsByPid

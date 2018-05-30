@@ -40,7 +40,7 @@
                     style="padding:0;width:72px;"
                 >
                     <router-link 
-                        :to="{path:'file',query:{name:name,id:id}}" 
+                        :to="{name:'Folder',query:{name:name,id:id}}" 
                         style="color:#495060;display: block;text-align:center"
                     >
                         文件

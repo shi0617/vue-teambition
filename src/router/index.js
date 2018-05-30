@@ -50,24 +50,29 @@ export default new Router({
                         },
                         {
                             path: 'file',
+                            name:'File',
                             component: File,
                             children:[
                                 {
-                                    path: '',
+                                    path: 'folder',
                                     name: 'Folder',
                                     component: Folder,
+                                },
+                                {
+                                    path: '*',
+                                    redirect: '/home'
                                 }
                             ]
                         },
                         {
                             path: '*',
-                            redirect: ''
+                            redirect: '/home'
                         }
                     ]
                 },
                 {
                     path: '*',
-                    redirect: ''
+                    redirect: '/home'
                 }
             ]
         },

@@ -499,7 +499,6 @@ app.get('/getfolder',(req,res,next)=>{
             return
         }
         if(doc){
-            console.log(doc)
             res.json({
                 success:true,
                 code:"获取文件夹成功",
@@ -562,6 +561,39 @@ app.post('/deletefolder',(req,res,next)=>{
             res.json({
                 success: false,
                 code:"删除文件夹失败"
+            })
+        }
+    })
+})
+//修改文件夹
+app.post('/changefolder',(req,res,next)=>{
+    console.log('修改文件夹')
+    let _id = req.body.id
+    let title = req.body.title
+    createFolderModel.findOne({_id},(err,doc)=>{
+        if(err){
+            console.log(err)
+            return
+        }
+        if(doc){
+            createFolderModel.update({
+                _id: _id,
+            },{$set:{title}},(error,docu)=>{
+                if(error){
+                    console.log(error)
+                    return
+                }
+                if(docu){
+                    res.json({
+                        success:true,
+                        code:"文件夹名称修改成功"
+                    })
+                }else{
+                    res.json({
+                        success:false,
+                        code:"文件夹名称修改失败"
+                    })
+                }
             })
         }
     })
