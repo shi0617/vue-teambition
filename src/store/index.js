@@ -124,6 +124,21 @@ let store = new Vuex.Store({
                 return false
             }
             return state.folderData.every(item=>item.checked)
+        },
+        len(state){
+            let arr = state.folderData.filter(item=>{
+                return item.checked
+            })
+            return arr.length
+        },
+        checkedIdArray(state){
+            let arr = []
+            state.folderData.forEach(item=>{
+                if(item.checked){
+                    arr.push(item._id)
+                }
+            })
+            return arr
         }
     },
     modules:{}

@@ -28,7 +28,7 @@
                             <Icon type="arrow-move"></Icon>
                             <span>移动选中</span>
                         </a>
-                        <a>
+                        <a v-if="$store.getters.len" @click="deleteChecked($store.getters.checkedIdArray)">
                             <Icon type="trash-a"></Icon>
                             <span>删除选中</span>
                         </a>
@@ -51,6 +51,26 @@
         methods:{
             createFolder(){
                 this.$store.commit('createFolder')
+            },
+            deleteChecked(arr){
+                this.http.postDeleteCheckedFolder({arr})
+                .then(({data})=>{
+                    if(data.success){
+                        let id = this.$route.query.id
+                        let pid = this.$route.query.pid
+                        pid = pid||id
+                        this.http.getFolder({pid})
+                        .then(({data})=>{
+                            if(data.success){
+                                this.$store.commit('getFolder',data.doc)
+                            }else{
+                                alert(data.code)
+                            }
+                        })
+                    }else{
+                        alert(data.code)
+                    }
+                })
             }
         },
         computed:{

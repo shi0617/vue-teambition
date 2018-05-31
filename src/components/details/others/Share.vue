@@ -1,10 +1,20 @@
 <template>
     <div id="share">
+        <div class='share_box' v-if="shareState">
+            <div class='share_box_content'>
+                <input type="text" placeholder="点击输入标题" v-model="shareTitle">
+                <textarea placeholder="点击输入正文" v-model="shareContent"></textarea>
+                <div class="div">
+                    <button @click="confirmCreateShare">保存</button>
+                    <button @click="cancelCreateShare">取消</button>
+                </div>
+            </div>
+        </div>
         <div class="wall-view">
             <div class="wall-wrap">
                 <div class="wall-left-column">
                     <header class="wall-left-column-header">
-                        <a>
+                        <a @click="addShare">
                             <span style="font-size: 20px;">
                                 <Icon type="ios-plus"></Icon>
                             </span>
@@ -12,7 +22,13 @@
                         </a>
                     </header>
                     <nav class="posts-navigator">
-                        <div class="nothing">
+                        <Menu theme="light" active-name="1" style="width:100%">
+                            <MenuItem name="1">
+                                <Icon type="document-text"></Icon>
+                                文章管理
+                            </MenuItem>
+                        </Menu>
+                        <div class="nothing" v-if="false">
                             目前还没有内容
                         </div>
                     </nav>
@@ -23,6 +39,26 @@
 </template>
 <script>
     export default{
+        data(){
+            return{
+                shareTitle:'',
+                shareContent:'',
+                shareState: false
+            }
+        },
+        methods:{
+            addShare(){
+                this.shareState = !this.shareState
+            },
+            confirmCreateShare(){
+                this.shareState = !this.shareState
+            },
+            cancelCreateShare(){
+                this.shareState = !this.shareState
+                this.shareTitle = ''
+                this.shareContent = ''
+            }
+        },
         created(){
             this.$store.commit('page',"2")
         }
@@ -81,6 +117,59 @@
         bottom: 0;
         width: 100%;
         overflow-y: auto;
-        background-color:red;
+    }
+    .wall-view .posts-navigator .nothing{
+        width:100%;
+        height: 100%;
+        font: 16px/100px '微软雅黑';
+        color: rgba(12,119,226,.8);
+        text-align:center;
+    }
+    .share_box{
+        position:fixed;
+        left:0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color:#fff;
+        z-index:9;
+        display:flex;
+    }
+    .share_box_content{
+        width: 965px;
+        height: 600px;
+        margin: auto;
+    }
+    .share_box_content .div{
+        width: 200px;
+        display:flex;
+        justify-content:space-between;
+        margin: 10px auto;
+    }
+    .share_box_content .div button{
+        font: 16px/20px '微软雅黑';
+        color: #fff;
+        background-color:rgba(12,119,226,.8);
+        border: none;
+        padding:5px 10px;
+        border-radius:3px;
+        outline: none;
+        cursor: pointer;
+    }
+    .share_box_content .div button:hover{
+         background-color:rgba(12,119,226,.6)
+    }
+    .share_box_content input,
+    .share_box_content textarea{
+        width: 100%;
+        padding:5px 0;
+        font: 16px/20px '微软雅黑';
+        border-radius:3px;
+        border:none;
+        margin-bottom: 15px;
+    }
+    .share_box_content textarea{
+        height: 472px;
+        resize:none;
     }
 </style>

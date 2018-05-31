@@ -541,7 +541,7 @@ app.post('/createfolder',(req,res,next)=>{
         }
     })
 })
-//创建文件夹
+//删除文件夹
 app.post('/deletefolder',(req,res,next)=>{
     console.log('删除文件夹')
     let _id = req.body.id
@@ -598,6 +598,41 @@ app.post('/changefolder',(req,res,next)=>{
         }
     })
 })
+//删除选中的文件夹
+app.post('/deletecheckedfolder',(req,res,next)=>{
+    console.log('删除选中文件夹')
+    let arr = req.body.arr
+    createFolderModel.remove({
+        '_id':{$in:arr}
+    },(err,doc)=>{
+        if(err){
+            return
+        }
+        if(doc){
+            console.log(doc)
+            res.json({
+                success: true,
+                code:"删除选中文件夹成功",
+                doc:doc
+            })
+        }else{
+            res.json({
+                success: false,
+                code:"删除文件夹失败"
+            })
+        }
+    })
+})
+//--------------------------------新建分享-------------------------------------
+//项目任务Schema
+let createShareSchema = new mongoose.Schema({
+    pid:String,
+    title:String,
+    content:String
+})
+//项目任务model
+let createShareModel = mongoose.model('Share',createShareSchema,'shareinfo');
+
 app.listen(8000,() => {
     console.log('服务已启动，port为:8000')
 });
