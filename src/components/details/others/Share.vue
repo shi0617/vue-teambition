@@ -22,16 +22,42 @@
                         </a>
                     </header>
                     <nav class="posts-navigator">
-                        <Menu theme="light" active-name="1" style="width:100%">
-                            <MenuItem name="1">
-                                <Icon type="document-text"></Icon>
-                                文章管理
+                        <Menu 
+                            theme="light" 
+                            style="width:100%"
+                            @on-select='selectMenu' 
+                        >
+                            <MenuItem 
+                                v-for="item,index in shareData"
+                                :name="index" 
+                                :key="item._id"
+                                style="font:16px/20px '微软雅黑';"
+                                :class="{color:page== index}"
+                            >
+                                <Icon type="cloud"></Icon>
+                                {{item.title}}
                             </MenuItem>
                         </Menu>
-                        <div class="nothing" v-if="false">
+                        <div class="nothing" v-if="!shareData.length">
                             目前还没有内容
                         </div>
                     </nav>
+                </div>
+                <div class="wall-right-column" v-if="shareData.length">
+                    <div class="edit">
+                        <span style="float:left">
+                            <Icon type="edit"></Icon>
+                        </span>
+                        <span style="float:right" @click="deleteShare(showObj._id)">
+                            <Icon type="trash-a"></Icon>
+                        </span>
+                    </div>
+                    <header class="head">
+                        {{showObj.title}}
+                    </header>
+                    <div class="content">
+                        {{showObj.content}}
+                    </div>
                 </div>
             </div>
         </div>
@@ -43,7 +69,11 @@
             return{
                 shareTitle:'',
                 shareContent:'',
-                shareState: false
+                shareState: false,
+                shareData:[],
+                page:'0',
+                showObj:{
+                }
             }
         },
         methods:{
@@ -51,16 +81,73 @@
                 this.shareState = !this.shareState
             },
             confirmCreateShare(){
+                if(this.shareTitle == ''||this.shareContent == ''){
+                    alert('标题和内容不能为空')
+                    return
+                }
+                let pid = this.$route.query.id
+                this.http.postCreateShare({pid,title:this.shareTitle,content:this.shareContent})
+                .then(({data})=>{
+                    if(data.success){
+                        this.shareData.push(data.doc)
+                        this.showObj = this.shareData[0]
+                        this.shareTitle=''
+                        this.shareContent=''
+                    }else{
+                        alert(data.code)
+                    }
+                })
                 this.shareState = !this.shareState
             },
             cancelCreateShare(){
                 this.shareState = !this.shareState
                 this.shareTitle = ''
                 this.shareContent = ''
+            },
+            selectMenu(name){
+                this.$router.push({
+                    query:{
+                        ...this.$route.query,
+                        page:name
+                    }
+                })
+                this.showObj = this.shareData[name]
+                this.page = name
+            },
+            deleteShare(id){
+                this.http.postDeleteShare({id})
+                .then(({data})=>{
+                    if(data.success){
+                        this.shareData = this.shareData.filter(item =>{
+                           return id!= item._id
+                        })
+                        this.$router.push({
+                            query:{
+                                name:this.$route.query.name,
+                                id:this.$route.query.id
+                            }
+                        })
+                        this.page = "0"
+                        this.showObj = this.shareData[0]||{}
+                    }else{
+                        alert(data.code)
+                    }
+                })
             }
         },
         created(){
             this.$store.commit('page',"2")
+            this.page = this.$route.query.page||'0'
+            let pid = this.$route.query.id
+            this.http.getShare({pid})
+            .then(({data})=>{
+                if(data.success){
+                    this.shareData = data.doc
+                    this.showObj=this.shareData[this.page]
+                }else{
+                    alert(data.code)
+                }
+            })
         }
     }
 </script>
@@ -125,6 +212,31 @@
         color: rgba(12,119,226,.8);
         text-align:center;
     }
+    .wall-view .wall-right-column{
+        margin-left: 330px;
+        font: 16px/20px '微软雅黑';
+        position:relative;
+    }
+    .wall-view .wall-right-column .head{
+        padding: 30px 15px;
+    }
+    .wall-view .wall-right-column .content{
+        padding: 0px 15px;
+    }
+    .wall-view .wall-right-column .edit{
+        position:absolute;
+        top: 20px;
+        right: 15px;
+        height:20px;
+    }
+    .wall-view .wall-right-column .edit span{
+        margin-left:10px;
+        font: 16px/20px '微软雅黑';
+        cursor:pointer;
+    }
+    .wall-view .wall-right-column .edit span:hover{
+        color:rgba(12,119,226,.8);
+    }
     .share_box{
         position:fixed;
         left:0;
@@ -171,5 +283,8 @@
     .share_box_content textarea{
         height: 472px;
         resize:none;
+    }
+    .color{
+        color:rgba(12,119,226,.8)
     }
 </style>

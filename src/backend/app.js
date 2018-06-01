@@ -624,15 +624,92 @@ app.post('/deletecheckedfolder',(req,res,next)=>{
     })
 })
 //--------------------------------新建分享-------------------------------------
-//项目任务Schema
+//分享Schema
 let createShareSchema = new mongoose.Schema({
     pid:String,
     title:String,
     content:String
 })
-//项目任务model
+//分享model
 let createShareModel = mongoose.model('Share',createShareSchema,'shareinfo');
-
+//获取分享
+app.get('/getshare',(req,res,next)=>{
+    console.log('获取分享')
+    let pid = req.query.pid
+    createShareModel.find({
+        pid
+    },(err,doc)=>{
+        if(err){
+            console.log(err)
+            return
+        }
+        if(doc){
+            res.json({
+                success:true,
+                code:"获取分享成功",
+                doc:doc
+            })
+        }else{
+            res.json({
+                success:false,
+                code:"获取分享失败"
+            })
+        }
+    })
+})
+//创建分享
+app.post('/createshare',(req,res,next)=>{
+    console.log('创建分享')
+    let title = req.body.title
+    let pid = req.body.pid
+    let content = req.body.content
+    createShareModel.create({
+        pid,
+        title,
+        content
+    },(err,doc)=>{
+        if(err){
+            console.log(err)
+            return
+        }
+        if(doc){
+            res.json({
+                success:true,
+                code:"创建分享成功",
+                doc:doc
+            })
+        }else{
+            res.json({
+                success:false,
+                code:"创建分享失败"
+            })
+        }
+    })
+})
+//删除分享
+app.post('/deleteshare',(req,res,next)=>{
+    console.log('删除分享')
+    let _id = req.body.id
+    createShareModel.findOneAndDelete({
+        _id
+    },(err,doc)=>{
+        if(err){
+            return
+        }
+        if(doc){
+            res.json({
+                success: true,
+                code:"删除分享成功",
+                doc:doc
+            })
+        }else{
+            res.json({
+                success: false,
+                code:"删除分享失败"
+            })
+        }
+    })
+})
 app.listen(8000,() => {
     console.log('服务已启动，port为:8000')
 });

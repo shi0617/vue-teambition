@@ -128,6 +128,24 @@ export function postChangeFolder(params) {
 export function postDeleteCheckedFolder(params) {
     return teambition.post('/deletecheckedfolder',params)
 }
+/*
+    获取分享
+*/
+export function getShare(params) {
+    return teambition.get('/getshare?pid='+ params.pid)
+}
+/*
+    创建分享
+*/
+export function postCreateShare(params) {
+    return teambition.post('/createshare',params)
+}
+/*
+    删除分享
+*/
+export function postDeleteShare(params) {
+    return teambition.post('/deleteshare',params)
+}
 export default {
     install(Vue){
         Vue.prototype.http = {
@@ -148,6 +166,9 @@ export default {
             postDeleteFolder,
             postChangeFolder,
             postDeleteCheckedFolder,
+            postCreateShare,
+            postDeleteShare,
+            getShare,
             getFolder,
             getUserFiles,
             getMissionsByPid
