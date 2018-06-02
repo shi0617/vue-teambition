@@ -31,8 +31,8 @@
         </div>
         <header class="head">
             <div class="search_new">
-                <input type="text" placeholder="输入搜索内容">
-                <span>
+                <input type="text" placeholder="输入搜索内容" v-if="false">
+                <span v-if="false">
                     <i @click="addFile">+</i>
                     <ul class="menu" v-if="addState">
                         <li @click="newProject">项目</li>

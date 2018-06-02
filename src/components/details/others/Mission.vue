@@ -51,7 +51,7 @@
             >
                 <header class="head">
                     <div style="float: left">{{item.mission_name}}</div>
-                    <div style="float: right;position:relative;">
+                    <div class="editMission" style="float: right;position:relative;">
                         <a 
                             class="hoverColor"
                             @click="editMission(item._id,item.edit,item.mission_name)"
@@ -442,6 +442,12 @@
         padding: 14px 18px;
         font: 16px/20px "微软雅黑";
         height: 48px;
+    } 
+    .scrum-stage .head .editMission{
+        display:none;
+    }
+    .scrum-stage:hover .head .editMission{
+        display:block;
     }
     .scrum-stage .head div a{
         margin-left: 5px;

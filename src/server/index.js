@@ -146,6 +146,12 @@ export function postCreateShare(params) {
 export function postDeleteShare(params) {
     return teambition.post('/deleteshare',params)
 }
+/*
+    修改分享
+*/
+export function postChangeShare(params) {
+    return teambition.post('/changeshare',params)
+}
 export default {
     install(Vue){
         Vue.prototype.http = {
@@ -168,6 +174,7 @@ export default {
             postDeleteCheckedFolder,
             postCreateShare,
             postDeleteShare,
+            postChangeShare,
             getShare,
             getFolder,
             getUserFiles,

@@ -8,7 +8,7 @@
                         <a @click="createFolder">                      
                             创建文件夹
                         </a>
-                        <a style="margin-left: 10px;">
+                        <a style="margin-left: 10px;" v-if="false">
                             上传
                         </a>
                     </div>

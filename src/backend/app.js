@@ -710,6 +710,34 @@ app.post('/deleteshare',(req,res,next)=>{
         }
     })
 })
+//修改分享
+app.post('/changeshare',(req,res,next)=>{
+    console.log('修改分享')
+    let _id = req.body.id
+    let title = req.body.title
+    let content = req.body.content
+    createShareModel.findOneAndUpdate({
+        _id
+    },{title,content},(err,doc)=>{
+        if(err){
+            return
+        }
+        if(doc){
+            res.json({
+                success: true,
+                code:"修改分享成功",
+                doc:doc
+            })
+        }else{
+            res.json({
+                success: false,
+                code:"修改分享成功",
+                code:"删除分享失败"
+            })
+        }
+    })
+})
+
 app.listen(8000,() => {
     console.log('服务已启动，port为:8000')
 });

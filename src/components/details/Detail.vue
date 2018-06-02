@@ -49,6 +49,7 @@
                 <MenuItem 
                     name="4" 
                     style="padding:0;width:72px;"
+                    v-if="false"
                 >
                     <router-link 
                         :to="{name:'Mission',query:{name:name,id:id}}" 
@@ -60,6 +61,7 @@
                 <MenuItem 
                     name="5" 
                     style="padding:0;width:72px;"
+                    v-if="false"
                 >
                     <router-link 
                         :to="{name:'Chat',query:{name:name,id:id}}" 

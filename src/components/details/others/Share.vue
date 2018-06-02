@@ -10,6 +10,16 @@
                 </div>
             </div>
         </div>
+        <div class='share_box' v-if="changeState">
+            <div class='share_box_content'>
+                <input type="text" placeholder="点击输入标题" v-model="changeObj.title" v-focus="changeState"> 
+                <textarea placeholder="点击输入正文" v-model="changeObj.content"></textarea>
+                <div class="div">
+                    <button @click="confirmChangeShare">保存</button>
+                    <button @click="cancelChangeShare">取消</button>
+                </div>
+            </div>
+        </div>
         <div class="wall-view">
             <div class="wall-wrap">
                 <div class="wall-left-column">
@@ -45,7 +55,7 @@
                 </div>
                 <div class="wall-right-column" v-if="shareData.length">
                     <div class="edit">
-                        <span style="float:left">
+                        <span style="float:left" @click="editShare">
                             <Icon type="edit"></Icon>
                         </span>
                         <span style="float:right" @click="deleteShare(showObj._id)">
@@ -72,11 +82,41 @@
                 shareState: false,
                 shareData:[],
                 page:'0',
-                showObj:{
-                }
+                showObj:{},
+                changeObj:{},
+                changeState:false
             }
         },
         methods:{
+            editShare(){
+                this.changeState = true
+                this.changeObj = {...this.showObj}
+            },
+            confirmChangeShare(){
+                this.http.postChangeShare({
+                    id:this.changeObj._id,
+                    title:this.changeObj.title,
+                    content:this.changeObj.content
+                }).then(({data})=>{
+                    if(data.success){
+                        this.showObj = {...this.changeObj}
+                        this.shareData.forEach(item=>{
+                            if(item._id == this.changeObj._id){
+                                item.content = this.changeObj.content
+                                item.title = this.changeObj.title
+                            }
+                        })
+                        this.changeState = false
+                        this.changeObj= {}
+                    }else{
+                        alert(data.code)
+                    }
+                })
+            },
+            cancelChangeShare(){
+                this.changeState = false
+                this.changeObj= {}
+            },
             addShare(){
                 this.shareState = !this.shareState
             },
